@@ -1,0 +1,1624 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kelra - Modern Point of Sale & Store Management System</title>
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --primary-glow: rgba(79, 70, 229, 0.25);
+      
+      --secondary: #0284c7;
+      --secondary-light: #e0f2fe;
+      
+      --accent: #10b981;
+      --accent-light: #d1fae5;
+      --accent-glow: rgba(16, 185, 129, 0.2);
+
+      --bg-body: #ffffff;
+      --bg-surface: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+
+      --text-dark: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 6px 20px -4px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 15px 35px -5px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.04);
+      --shadow-xl: 0 25px 50px -12px rgba(15, 23, 42, 0.12);
+
+      --transition-smooth: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* Light Theme Ambient Gradients */
+    .ambient-aurora {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100vw;
+      height: 900px;
+      background: radial-gradient(circle at 50% 5%, rgba(99, 102, 241, 0.08), transparent 60%),
+                  radial-gradient(circle at 85% 20%, rgba(16, 185, 129, 0.06), transparent 50%),
+                  radial-gradient(circle at 15% 25%, rgba(2, 132, 199, 0.06), transparent 50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* White header to match the requested navbar styling */
+    .site-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      z-index: 1000;
+      padding: 12px 24px;
+      transition: all var(--transition-smooth);
+    }
+
+    .header-container {
+      max-width: 1360px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 22px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-mark svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .brand-word {
+      font-size: 1.5rem;
+      letter-spacing: -0.04em;
+      color: #0f172a;
+      text-transform: lowercase;
+      font-weight: 800;
+    }
+
+    .brand-icon-box {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+    }
+
+    .nav-links-desktop {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .nav-link {
+      color: #1f2937;
+      font-size: 0.97rem;
+      font-weight: 500;
+      transition: color var(--transition-smooth), opacity var(--transition-smooth);
+      white-space: nowrap;
+      opacity: 0.9;
+    }
+
+    .nav-link:hover {
+      color: #111827;
+      opacity: 1;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .btn-login {
+      color: #111827;
+      font-weight: 600;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: 1px solid #d1d5db;
+      transition: all var(--transition-smooth);
+      background: transparent;
+    }
+
+    .btn-login:hover {
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    .btn-glow-primary {
+      background: var(--primary);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition-smooth);
+      border: none;
+    }
+
+    .btn-glow-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Hero Section (White Theme Layout) */
+    .hero-wrapper {
+      position: relative;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 70px 24px 80px;
+      z-index: 1;
+    }
+
+    .hero-split-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 48px;
+      align-items: center;
+      margin-bottom: 60px;
+    }
+
+    .hero-left-content {
+      text-align: left;
+    }
+
+    .hero-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--primary-light);
+      border: 1px solid #c7d2fe;
+      color: var(--primary);
+      padding: 8px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent);
+      animation: pulseAnim 2s infinite;
+    }
+
+    @keyframes pulseAnim {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    .hero-headline {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.8rem;
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -1.5px;
+      color: var(--text-dark);
+      margin-bottom: 20px;
+    }
+
+    .hero-gradient-text {
+      background: linear-gradient(135deg, var(--primary), #0284c7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subheadline {
+      font-size: 1.18rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      line-height: 1.65;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .btn-hero-main {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: #ffffff;
+      padding: 15px 34px;
+      border-radius: var(--radius-md);
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 24px var(--primary-glow);
+      transition: all var(--transition-smooth);
+    }
+
+    .btn-hero-main:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(79, 70, 229, 0.45);
+      background: linear-gradient(135deg, var(--primary-hover), var(--primary));
+    }
+
+    .btn-hero-secondary {
+      background: transparent;
+      border: 1px solid rgba(79, 70, 229, 0.2);
+      color: var(--primary);
+      padding: 15px 28px;
+      border-radius: var(--radius-md);
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all var(--transition-smooth);
+      box-shadow: none;
+    }
+
+    .btn-hero-secondary:hover {
+      background: rgba(79, 70, 229, 0.04);
+      border-color: rgba(79, 70, 229, 0.35);
+      transform: translateY(-2px);
+    }
+
+    /* Hero Right Visuals (Composite Image Showcase in Light Theme) */
+    .hero-visual-card {
+      position: relative;
+    }
+
+    .main-terminal-photo-box {
+      position: relative;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-xl);
+      height: 420px;
+      background: white;
+    }
+
+    .main-terminal-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-overlay-glass {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(15, 23, 42, 0.75) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px;
+    }
+
+    /* Floating Badges */
+    .floating-receipt-badge {
+      position: absolute;
+      top: -20px;
+      right: -15px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: floatBadge 4s ease-in-out infinite;
+      z-index: 10;
+    }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .floating-sale-pill {
+      position: absolute;
+      bottom: -15px;
+      left: -15px;
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      z-index: 10;
+    }
+
+    /* Interactive Live Device Terminal (Light Theme) */
+    .hero-preview-box {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .preview-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .window-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .window-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #10b981; }
+
+    .preview-body-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+
+    .preview-catalog {
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      border: 1px solid var(--border-color);
+    }
+
+    .preview-search-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .preview-input {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text-dark);
+      font-size: 0.88rem;
+      outline: none;
+    }
+
+    .preview-item-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .preview-product-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+    }
+
+    .preview-product-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .preview-thumb {
+      height: 80px;
+      background: var(--bg-surface);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+
+    .preview-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-item-title {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-item-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-top: 4px;
+    }
+
+    .preview-cart {
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .preview-cart-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .preview-cart-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-dark);
+    }
+
+    .preview-cart-total {
+      margin-top: 20px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .btn-preview-pay {
+      background: linear-gradient(135deg, var(--accent), #059669);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.94rem;
+      margin-top: 14px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: all var(--transition-smooth);
+    }
+    .btn-preview-pay:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
+    }
+
+    /* Trust Stats Strip */
+    .stats-strip {
+      max-width: 1280px;
+      margin: 40px auto 0;
+      padding: 36px 24px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-color);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+    }
+
+    /* Section Global Styles */
+    .section-block {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 100px 24px;
+    }
+
+    .section-title-wrap {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 60px;
+    }
+
+    .section-pill-tag {
+      display: inline-block;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .section-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .section-subtext {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+
+    /* Features Grid (6 Core Modules - Light Cards) */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .feature-box {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px 30px;
+      transition: all var(--transition-smooth);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-6px);
+      border-color: #c7d2fe;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 24px;
+    }
+
+    .feature-icon.pos { background: var(--primary-light); color: var(--primary); }
+    .feature-icon.inv { background: var(--accent-light); color: var(--accent); }
+    .feature-icon.sales { background: var(--secondary-light); color: var(--secondary); }
+    .feature-icon.purch { background: #fef3c7; color: #d97706; }
+    .feature-icon.cust { background: #f3e8ff; color: #9333ea; }
+    .feature-icon.rep { background: #fee2e2; color: #ef4444; }
+
+    .feature-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+    }
+
+    .feature-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* Pricing Section (Light Theme) */
+    .pricing-bg {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      align-items: stretch;
+    }
+
+    .pricing-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 44px 36px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all var(--transition-smooth);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pricing-card.popular {
+      border: 2px solid var(--primary);
+      box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+      transform: scale(1.03);
+    }
+
+    .popular-pill {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: white;
+      padding: 4px 18px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+    }
+
+    .plan-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .plan-price-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: var(--text-dark);
+      margin: 18px 0;
+      line-height: 1;
+    }
+
+    .plan-price-num span {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .plan-checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin: 24px 0 36px;
+      flex: 1;
+    }
+
+    .plan-checklist li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.94rem;
+      color: var(--text-body);
+    }
+
+    .plan-checklist li i {
+      color: var(--accent);
+      font-size: 1rem;
+    }
+
+    /* About Section */
+    .about-card-split {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    /* Contact Section */
+    .contact-card-split {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 56px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .form-input-field {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      color: var(--text-dark);
+      font-size: 0.95rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+      margin-top: 6px;
+    }
+
+    .form-input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+      background: #ffffff;
+    }
+
+    /* ==========================================================================
+       RICH WHITE / LIGHT THEME FOOTER
+       ========================================================================== */
+    .site-footer-white {
+      background: #f8fafc;
+      border-top: 1px solid var(--border-color);
+      padding: 80px 40px 30px;
+      position: relative;
+    }
+
+    .footer-top-grid {
+      max-width: 1280px;
+      margin: 0 auto 60px;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr 1.2fr;
+      gap: 40px;
+    }
+
+    .footer-brand-col {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .footer-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .footer-social-links {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    .footer-social-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 1rem;
+      transition: all var(--transition-smooth);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .footer-social-icon:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+    }
+
+    .footer-col-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .footer-links-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-links-list a {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      transition: color var(--transition-smooth), transform var(--transition-smooth);
+      display: inline-block;
+    }
+
+    .footer-links-list a:hover {
+      color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .newsletter-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .newsletter-form {
+      display: flex;
+      gap: 8px;
+    }
+
+    .newsletter-input {
+      flex: 1;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      color: var(--text-dark);
+      font-size: 0.88rem;
+      outline: none;
+    }
+    .newsletter-input:focus {
+      border-color: var(--primary);
+    }
+
+    .newsletter-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+    }
+    .newsletter-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .footer-bottom-bar {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding-top: 30px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 24px;
+    }
+    .footer-bottom-links a:hover {
+      color: var(--primary);
+    }
+    .legacy-site-footer-white { display: none; }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .hero-split-grid { grid-template-columns: 1fr; }
+      .hero-headline { font-size: 3rem; }
+      .features-grid, .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      .pricing-card.popular { transform: none; }
+      .preview-body-grid, .about-card-split, .contact-card-split { grid-template-columns: 1fr; }
+      .stats-strip { grid-template-columns: repeat(2, 1fr); }
+      .footer-top-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .site-header { padding: 14px 20px; }
+      .nav-links-desktop { display: none; }
+      .hero-headline { font-size: 2.3rem; }
+      .features-grid, .pricing-grid, .stats-strip, .footer-top-grid { grid-template-columns: 1fr; }
+      .preview-item-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-bottom-bar { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Light Ambient Light Mesh -->
+  <div class="ambient-aurora"></div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="{% url 'home' %}" class="brand-logo" aria-label="Kelra home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 180 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kelra symbol">
+            <defs>
+              <linearGradient id="kelraMarkGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#8b5cf6"/>
+                <stop offset="100%" stop-color="#6d28d9"/>
+              </linearGradient>
+            </defs>
+            <path d="M18 16 L80 16 L108 50 L120 16 L165 16 L119 77 L165 134 L120 134 L106 102 L77 134 L18 134 L62 79 L18 16 Z" fill="url(#kelraMarkGradient)"/>
+            <path d="M70 26 L128 26 L95 73 L74 56 Z" fill="rgba(255,255,255,0.18)"/>
+          </svg>
+        </span>
+        <span class="brand-word">kelra</span>
+      </a>
+
+      <nav class="nav-links-desktop">
+        <a href="{% url 'home' %}" class="nav-link">Home</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="{% url 'pos_showcase_page' %}" class="nav-link">POS Showcase</a>
+        <a href="{% url 'pricing_page' %}" class="nav-link">Pricing</a>
+        <a href="{% url 'about_page' %}" class="nav-link">About</a>
+        <a href="{% url 'contact_page' %}" class="nav-link">Contact</a>
+      </nav>
+
+      <div class="header-actions">
+        <a href="{% url 'login' %}" class="btn-login">Sign In</a>
+        <a href="{% url 'register' %}" class="btn-glow-primary">
+          <span>Free Trial</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section (White Theme Layout with Real Images) -->
+  <section class="hero-wrapper" id="home">
+    <div class="hero-split-grid">
+      <!-- Left Content -->
+      <div class="hero-left-content">
+        <h1 class="hero-headline">
+          Kelra for <span class="hero-gradient-text">Your Business</span>
+        </h1>
+
+        <p class="hero-subheadline">
+          Manage your sales, products, inventory and customers from one easy-to-use system. Engineered specifically for convenience marts, bakeries, cafes, and modern retail shops.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="{% url 'register' %}" class="btn-hero-main">
+            <span>Start 14-Day Free Access</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+          <a href="{% url 'contact_page' %}" class="btn-hero-secondary">
+            <span>Book a Demo</span>
+            <i class="fa-solid fa-calendar-check"></i>
+          </a>
+        </div>
+
+      </div>
+
+      <!-- Right Visual (Hero Real Images + Badges) -->
+      <div class="hero-visual-card">
+        <div class="main-terminal-photo-box">
+          <img src="{% static 'images/hero_pos_tablet.jpg' %}" alt="Modern POS Touchscreen Terminal">
+          <div class="photo-overlay-glass">
+            <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+              <div>
+                <span style="background: rgba(79, 70, 229, 0.9); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                  Hardware Compatible
+                </span>
+                <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; color: white; margin-top: 6px;">
+                  Works on Any Touchscreen, PC & Tablet
+                </h4>
+              </div>
+              <div style="text-align: right;">
+                <span style="font-size: 0.75rem; color: #cbd5e1;">Scanner Latency</span>
+                <div style="color: #34d399; font-weight: 800; font-size: 1.1rem;">&lt; 50ms</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Interactive POS Device Preview (White Theme) -->
+    <div class="hero-preview-box" id="preview">
+      <div class="preview-header-bar">
+        <div class="window-dots">
+          <span class="window-dot dot-red"></span>
+          <span class="window-dot dot-yellow"></span>
+          <span class="window-dot dot-green"></span>
+        </div>
+        <div style="font-size: 0.88rem; color: var(--text-dark); font-weight: 600;">
+          <i class="fa-solid fa-desktop" style="color: var(--primary);"></i> Kelra Terminal - Terminal #01 (Cashier: admin)
+        </div>
+        <div style="background: var(--accent-light); color: #065f46; padding: 4px 12px; border-radius: 999px; font-size: 0.75rem; font-weight: 700;">
+          ONLINE &bull; READY
+        </div>
+      </div>
+
+      <div class="preview-body-grid">
+        <!-- Products Left Grid -->
+        <div class="preview-catalog">
+          <div class="preview-search-row">
+            <input type="text" class="preview-input" value="Click products below to test live cart..." readonly>
+            <div style="background: white; border: 1px solid var(--border-color); padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; color: var(--primary); font-weight: 600; display: flex; align-items: center; gap: 6px;">
+              <i class="fa-solid fa-barcode"></i> Scanner Ready
+            </div>
+          </div>
+
+          <div class="preview-item-grid">
+            <div class="preview-product-card" onclick="interactiveAdd(50, 'Coca Cola 500ml')">
+              <div class="preview-thumb">
+                <img src="/media/products/coca_cola.jpg" alt="Coca Cola">
+              </div>
+              <div class="preview-item-title">Coca Cola 500ml</div>
+              <div class="preview-item-price">Rs. 50.00</div>
+            </div>
+
+            <div class="preview-product-card" onclick="interactiveAdd(40, 'Lays Classic Chips')">
+              <div class="preview-thumb">
+                <img src="/media/products/lays_chips.jpg" alt="Lays Chips">
+              </div>
+              <div class="preview-item-title">Lays Classic Chips</div>
+              <div class="preview-item-price">Rs. 40.00</div>
+            </div>
+
+            <div class="preview-product-card" onclick="interactiveAdd(70, 'Chocolate Muffin')">
+              <div class="preview-thumb">
+                <img src="/media/products/chocolate_muffin.jpg" alt="Muffin">
+              </div>
+              <div class="preview-item-title">Chocolate Muffin</div>
+              <div class="preview-item-price">Rs. 70.00</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cart Right Preview -->
+        <div class="preview-cart">
+          <div>
+            <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-dark); margin-bottom: 12px; display: flex; justify-content: space-between;">
+              <span><i class="fa-solid fa-basket-shopping" style="color: var(--primary);"></i> Interactive Cart</span>
+              <span id="demo-item-count" style="color: var(--accent); font-weight: 700;">3 Items</span>
+            </div>
+
+            <div class="preview-cart-list">
+              <div class="preview-cart-row">
+                <span>Coca Cola 500ml &times; 2</span>
+                <strong>Rs. 100.00</strong>
+              </div>
+              <div class="preview-cart-row">
+                <span>Lays Classic Chips &times; 1</span>
+                <strong>Rs. 40.00</strong>
+              </div>
+              <div class="preview-cart-row">
+                <span style="color: var(--text-muted);">Tax (13% VAT)</span>
+                <span style="color: var(--text-muted);">Rs. 18.20</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="preview-cart-total">
+              <span style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500;">Total Amount</span>
+              <strong id="demo-cart-total" style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: var(--primary);">Rs. 158.20</strong>
+            </div>
+
+            <a href="{% url 'login' %}" class="btn-preview-pay">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>Launch POS & Complete Sale</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Live Stats Strip -->
+  <div style="max-width: 1280px; margin: 0 auto 80px; padding: 0 24px;">
+    <div class="stats-strip">
+      <div>
+        <div class="stat-number">0.2s</div>
+        <div class="stat-label">Checkout Speed</div>
+      </div>
+      <div>
+        <div class="stat-number">100%</div>
+        <div class="stat-label">Real-time Stock Accuracy</div>
+      </div>
+      <div>
+        <div class="stat-number">12+</div>
+        <div class="stat-label">Core Business Modules</div>
+      </div>
+      <div>
+        <div class="stat-number">Zero</div>
+        <div class="stat-label">Proprietary Hardware Lock</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section (Section 15 Specification) -->
+  <section class="section-block" id="features" style="padding-top: 0;">
+    <div class="section-title-wrap">
+      <span class="section-pill-tag">Comprehensive Store Suite</span>
+      <h2 class="section-heading">Everything You Need to Run Your Retail Store</h2>
+      <p class="section-subtext">Built specifically to simplify everyday store operations without messy setups.</p>
+    </div>
+
+    <div class="features-grid">
+      <!-- 1. Fast POS -->
+      <div class="feature-box">
+        <div class="feature-icon pos">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <h3 class="feature-title">Fast POS</h3>
+        <p class="feature-desc">Scan barcodes, instant keyup search, live quantity modifiers, flat/percent discounts, and quick cash change calculator.</p>
+      </div>
+
+      <!-- 2. Inventory Management -->
+      <div class="feature-box">
+        <div class="feature-icon inv">
+          <i class="fa-solid fa-boxes-stacked"></i>
+        </div>
+        <h3 class="feature-title">Inventory Management</h3>
+        <p class="feature-desc">Automatic real-time stock deductions on checkout, manual Stock-In/Out adjustments, and automated low-stock warnings.</p>
+      </div>
+
+      <!-- 3. Sales Management -->
+      <div class="feature-box">
+        <div class="feature-icon sales">
+          <i class="fa-solid fa-receipt"></i>
+        </div>
+        <h3 class="feature-title">Sales Management</h3>
+        <p class="feature-desc">Generate unique invoice numbers, multi-tender payments (Cash, Card, QR Code), and 80mm thermal receipt printing.</p>
+      </div>
+
+      <!-- 4. Purchase Management -->
+      <div class="feature-box">
+        <div class="feature-icon purch">
+          <i class="fa-solid fa-truck-ramp-box"></i>
+        </div>
+        <h3 class="feature-title">Purchase Management</h3>
+        <p class="feature-desc">Create multi-item supplier orders. Received shipments automatically increment your product stock without manual entry.</p>
+      </div>
+
+      <!-- 5. Customer Management -->
+      <div class="feature-box">
+        <div class="feature-icon cust">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <h3 class="feature-title">Customer Management</h3>
+        <p class="feature-desc">Maintain customer directories, purchase history ledgers, and add new customers directly from the POS modal on-the-fly.</p>
+      </div>
+
+      <!-- 6. Reports -->
+      <div class="feature-box">
+        <div class="feature-icon rep">
+          <i class="fa-solid fa-chart-line"></i>
+        </div>
+        <h3 class="feature-title">Reports & Analytics</h3>
+        <p class="feature-desc">Daily sales, monthly trends, top-selling products, operational expenses, and true Net Profit calculations.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Section (Section 15 Specification) -->
+  <section class="pricing-bg" id="pricing">
+    <div class="section-block">
+      <div class="section-title-wrap">
+        <span class="section-pill-tag">Transparent Investment</span>
+        <h2 class="section-heading">Simple, Transparent Pricing</h2>
+        <p class="section-subtext">No hidden fees, no per-transaction cuts, and no mandatory hardware lock-in.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- 1. Starter -->
+        <div class="pricing-card">
+          <div class="plan-title">Starter</div>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">For small counters, kiosks, and single-register shops.</p>
+          
+          <div class="plan-price-num">
+            Rs. 999 <span>/month</span>
+          </div>
+
+          <ul class="plan-checklist">
+            <li><i class="fa-solid fa-check"></i> 1 Cashier Terminal</li>
+            <li><i class="fa-solid fa-check"></i> Up to 500 Products</li>
+            <li><i class="fa-solid fa-check"></i> Barcode Scanning & Thermal Print</li>
+            <li><i class="fa-solid fa-check"></i> Basic Stock & Sales Tracking</li>
+            <li><i class="fa-solid fa-check"></i> Standard Email Support</li>
+          </ul>
+
+          <a href="{% url 'register' %}?plan=starter" class="btn-hero-secondary" style="justify-content: center;">
+            <i class="fa-solid fa-gift" style="color: var(--primary);"></i>
+            <span>Start 14-Day Free Access</span>
+          </a>
+        </div>
+
+        <!-- 2. Business (Featured) -->
+        <div class="pricing-card popular">
+          <div class="popular-pill">Most Popular</div>
+          <div class="plan-title" style="color: var(--primary);">Business</div>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">For busy retail stores, mini-marts, and supermarkets.</p>
+          
+          <div class="plan-price-num">
+            Rs. 2,499 <span>/month</span>
+          </div>
+
+          <ul class="plan-checklist">
+            <li><i class="fa-solid fa-check"></i> <strong>Unlimited</strong> Products & Orders</li>
+            <li><i class="fa-solid fa-check"></i> Multi-Role Staff (Admin, Manager, Cashier)</li>
+            <li><i class="fa-solid fa-check"></i> Purchase Orders & Auto Stock-In</li>
+            <li><i class="fa-solid fa-check"></i> Expense Ledger & Profit Reports</li>
+            <li><i class="fa-solid fa-check"></i> Customer Directory & History</li>
+            <li><i class="fa-solid fa-check"></i> Priority 24/7 Phone & WhatsApp Support</li>
+          </ul>
+
+          <a href="{% url 'register' %}?plan=business" class="btn-glow-primary" style="justify-content: center; padding: 14px;">
+            <i class="fa-solid fa-rocket"></i>
+            <span>Start 14-Day Free Access</span>
+          </a>
+        </div>
+
+        <!-- 3. Enterprise -->
+        <div class="pricing-card">
+          <div class="plan-title">Enterprise</div>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">For multi-counter chains and custom setups.</p>
+          
+          <div class="plan-price-num">
+            Rs. 5,999 <span>/month</span>
+          </div>
+
+          <ul class="plan-checklist">
+            <li><i class="fa-solid fa-check"></i> Everything in Business</li>
+            <li><i class="fa-solid fa-check"></i> Custom Hardware Driver Setup</li>
+            <li><i class="fa-solid fa-check"></i> Dedicated Account Specialist</li>
+            <li><i class="fa-solid fa-check"></i> In-Store Onsite Staff Training</li>
+            <li><i class="fa-solid fa-check"></i> Custom Database Backup Automation</li>
+          </ul>
+
+          <a href="{% url 'register' %}?plan=enterprise" class="btn-hero-secondary" style="justify-content: center;">
+            <i class="fa-solid fa-shield-halved" style="color: var(--primary);"></i>
+            <span>Start 14-Day Free Access</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section class="section-block" id="about">
+    <div class="about-card-split">
+      <div>
+        <span class="section-pill-tag">About Kelra</span>
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 2.4rem; color: var(--text-dark); line-height: 1.25; margin-bottom: 20px;">
+          Engineered for Extreme Speed & Zero Hassle
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 16px; line-height: 1.7;">
+          Traditional POS systems are bloated, slow, and require expensive proprietary hardware. We built Kelra to run on any computer, laptop, or tablet with instant browser access.
+        </p>
+        <p style="color: var(--text-muted); line-height: 1.7;">
+          Whether you operate a grocery shop, a boutique, a bakery, or an electronics mart, our system gives you complete mastery over your register, inventory, and net profits in minutes.
+        </p>
+      </div>
+
+      <div style="border-radius: var(--radius-lg); overflow: hidden; height: 320px; border: 1px solid var(--border-color); box-shadow: var(--shadow-md);">
+        <img src="{% static 'images/retail_checkout.jpg' %}" alt="Retail Store Checkout Counter" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact & Demo Request -->
+  <section class="section-block" id="contact" style="padding-top: 0;">
+    <div class="contact-card-split">
+      <div>
+        <span class="section-pill-tag">Let's Talk</span>
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 2.3rem; color: var(--text-dark); margin-bottom: 18px;">
+          Book a Live Demo or Free Consultation
+        </h2>
+        <p style="color: var(--text-muted); margin-bottom: 28px; line-height: 1.7;">
+          Have questions about setting up barcode scanners, printing receipts, or migrating your existing product catalog? Our team is available 7 days a week.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 16px; color: var(--text-body); font-size: 0.95rem;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 38px; height: 38px; background: var(--primary-light); color: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              <i class="fa-solid fa-phone"></i>
+            </div>
+            <span>+977 1-4223344 / 9801234567</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 38px; height: 38px; background: var(--accent-light); color: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+            <span>support@simplepos.com</span>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="width: 38px; height: 38px; background: var(--secondary-light); color: var(--secondary); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+              <i class="fa-solid fa-location-dot"></i>
+            </div>
+            <span>New Road Commercial Hub, Kathmandu, Nepal</span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <form onsubmit="event.preventDefault(); alert('Demo request received! Our specialist will reach out shortly.');">
+          <div style="margin-bottom: 16px;">
+            <label style="font-size: 0.88rem; font-weight: 600; color: var(--text-dark);">Full Name *</label>
+            <input type="text" class="form-input-field" required placeholder="Your Name">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label style="font-size: 0.88rem; font-weight: 600; color: var(--text-dark);">Store / Business Name *</label>
+            <input type="text" class="form-input-field" required placeholder="e.g. Kathmandu Fresh Mart">
+          </div>
+
+          <div style="margin-bottom: 16px;">
+            <label style="font-size: 0.88rem; font-weight: 600; color: var(--text-dark);">Mobile / WhatsApp *</label>
+            <input type="text" class="form-input-field" required placeholder="Phone number">
+          </div>
+
+          <div style="margin-bottom: 24px;">
+            <label style="font-size: 0.88rem; font-weight: 600; color: var(--text-dark);">Message or Specific Questions</label>
+            <textarea class="form-input-field" rows="3" placeholder="Tell us about your business setup..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-glow-primary" style="width: 100%; justify-content: center; padding: 14px;">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Submit Demo Request</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  {% include 'website/_public_footer.html' %}
+
+  <!-- ==========================================================================
+       RICH WHITE / LIGHT THEME FOOTER
+       ========================================================================== -->
+  <footer class="legacy-site-footer-white">
+    <div class="footer-top-grid">
+      <!-- Col 1: Brand & Bio -->
+      <div class="footer-brand-col">
+        <a href="#" class="brand-logo">
+          <div class="brand-icon-box" style="width: 36px; height: 36px; font-size: 1.1rem; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -0.08em;">
+            S
+          </div>
+          <span>Kelra</span>
+        </a>
+        <p class="footer-desc">
+          Empowering retail stores, supermarkets, bakeries, and boutiques with lightning-fast checkout, automated stock control, and true net profit visibility.
+        </p>
+        <div class="footer-social-links">
+          <a href="#" class="footer-social-icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="footer-social-icon" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="footer-social-icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#" class="footer-social-icon" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" class="footer-social-icon" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 0.84rem; color: #059669; font-weight: 600; margin-top: 6px;">
+          <span class="pulse-dot"></span> All Systems Operational
+        </div>
+      </div>
+
+      <!-- Col 2: Core Modules -->
+      <div>
+        <div class="footer-col-title">Core Modules</div>
+        <ul class="footer-links-list">
+          <li><a href="{% url 'login' %}"><i class="fa-solid fa-bolt" style="color: var(--primary); width: 18px;"></i> POS Terminal</a></li>
+          <li><a href="{% url 'login' %}"><i class="fa-solid fa-warehouse" style="color: var(--accent); width: 18px;"></i> Inventory Stock</a></li>
+          <li><a href="{% url 'login' %}"><i class="fa-solid fa-truck-ramp-box" style="color: #d97706; width: 18px;"></i> Purchase Orders</a></li>
+          <li><a href="{% url 'login' %}"><i class="fa-solid fa-receipt" style="color: var(--secondary); width: 18px;"></i> Sales & Invoices</a></li>
+          <li><a href="{% url 'login' %}"><i class="fa-solid fa-users" style="color: #9333ea; width: 18px;"></i> Customer Ledger</a></li>
+          <li><a href="{% url 'login' %}"><i class="fa-solid fa-chart-line" style="color: #ef4444; width: 18px;"></i> Profit & Reports</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 3: Retail Solutions -->
+      <div>
+        <div class="footer-col-title">Solutions</div>
+        <ul class="footer-links-list">
+          <li><a href="#features">Grocery & Supermarts</a></li>
+          <li><a href="#features">Bakeries & Confectionery</a></li>
+          <li><a href="#features">Fashion & Boutiques</a></li>
+          <li><a href="#features">Electronics & Mobile</a></li>
+          <li><a href="#features">Convenience Stores</a></li>
+          <li><a href="#features">Wholesale Distributors</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 4: Resources & Hardware -->
+      <div>
+        <div class="footer-col-title">Resources</div>
+        <ul class="footer-links-list">
+          <li><a href="{% url 'hardware_support' %}">Barcode Setup Guide</a></li>
+          <li><a href="{% url 'hardware_support' %}">Thermal Printer Drivers</a></li>
+          <li><a href="{% url 'security' %}">Security & Backups</a></li>
+          <li><a href="{% url 'privacy_policy' %}">Data Privacy</a></li>
+          <li><a href="{% url 'pricing_page' %}">Plan Comparison</a></li>
+          <li><a href="{% url 'login' %}">Staff Sign In</a></li>
+        </ul>
+      </div>
+
+      <!-- Col 5: Newsletter & Contact -->
+      <div class="newsletter-box">
+        <div class="footer-col-title">Stay Updated</div>
+        <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">
+          Subscribe for software updates, retail growth tactics, and new feature announcements.
+        </p>
+        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed successfully!');">
+          <input type="email" class="newsletter-input" required placeholder="Enter work email">
+          <button type="submit" class="newsletter-btn">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </form>
+        <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 4px;">
+          <i class="fa-solid fa-shield-halved"></i> No spam. Unsubscribe anytime.
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Copyright Bar -->
+    <div class="footer-bottom-bar">
+      <div>
+        &copy; 2026 Kelra System.
+      </div>
+      <div class="footer-bottom-links">
+        <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+        <a href="{% url 'terms_of_service' %}">Terms of Service</a>
+        <a href="{% url 'security' %}">Security</a>
+        <a href="{% url 'hardware_support' %}">Hardware Support</a>
+      </div>
+      <div style="color: var(--primary); font-weight: 600;">
+        Made with <i class="fa-solid fa-heart" style="color: #ef4444;"></i> for Retail Stores
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Hero Interactive Cart Simulation
+    let demoCart = {
+      'Coca Cola 500ml': { price: 50.00, qty: 2 },
+      'Lays Classic Chips': { price: 40.00, qty: 1 }
+    };
+
+    function interactiveAdd(price, name) {
+      if (demoCart[name]) {
+        demoCart[name].qty += 1;
+      } else {
+        demoCart[name] = { price: price, qty: 1 };
+      }
+      
+      renderDemoCart();
+      
+      const totalEl = document.getElementById('demo-cart-total');
+      totalEl.style.transform = 'scale(1.15)';
+      setTimeout(() => totalEl.style.transform = 'scale(1)', 200);
+    }
+
+    function renderDemoCart() {
+      const cartList = document.querySelector('.preview-cart-list');
+      cartList.innerHTML = '';
+      
+      let subtotal = 0;
+      let count = 0;
+      
+      for (const [name, item] of Object.entries(demoCart)) {
+        subtotal += item.price * item.qty;
+        count += item.qty;
+        
+        const row = document.createElement('div');
+        row.className = 'preview-cart-row';
+        row.innerHTML = `<span>${name} &times; ${item.qty}</span><strong>Rs. ${(item.price * item.qty).toFixed(2)}</strong>`;
+        cartList.appendChild(row);
+      }
+      
+      const tax = subtotal * 0.13;
+      const total = subtotal + tax;
+      
+      const taxRow = document.createElement('div');
+      taxRow.className = 'preview-cart-row';
+      taxRow.innerHTML = `<span style="color: var(--text-muted);">Tax (13% VAT)</span><span style="color: var(--text-muted);">Rs. ${tax.toFixed(2)}</span>`;
+      cartList.appendChild(taxRow);
+      
+      document.getElementById('demo-cart-total').textContent = `Rs. ${total.toFixed(2)}`;
+      document.getElementById('demo-item-count').textContent = `${count} Items`;
+    }
+  </script>
+</body>
+</html>

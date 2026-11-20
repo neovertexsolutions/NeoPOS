@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Stock Movement History{% endblock %}
+{% block header_title %}Inventory Movement Log{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'inventory_list' %}" class="btn btn-secondary">
+  <i class="fa-solid fa-arrow-left"></i> Back to Inventory
+</a>
+{% endblock %}
+
+{% block content %}
+<!-- Filters Bar -->
+<div class="card" style="padding: 18px 24px; margin-bottom: 20px;">
+  <form method="GET" style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center;">
+    <div style="flex: 1; min-width: 180px;">
+      <select name="type" class="form-control">
+        <option value="">All Movement Types</option>
+        <option value="sale" {% if selected_type == 'sale' %}selected{% endif %}>Sale</option>
+        <option value="purchase" {% if selected_type == 'purchase' %}selected{% endif %}>Purchase</option>
+        <option value="in" {% if selected_type == 'in' %}selected{% endif %}>Stock In</option>
+        <option value="out" {% if selected_type == 'out' %}selected{% endif %}>Stock Out</option>
+        <option value="adjustment" {% if selected_type == 'adjustment' %}selected{% endif %}>Adjustment</option>
+      </select>
+    </div>
+    <div style="flex: 2; min-width: 200px;">
+      <select name="product" class="form-control">
+        <option value="">All Products</option>
+        {% for p in products %}
+        <option value="{{ p.id }}" {% if selected_product == p.id|stringformat:"i" %}selected{% endif %}>{{ p.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+    {% if selected_type or selected_product %}
+    <a href="{% url 'movement_history' %}" class="btn btn-secondary">Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+<!-- History Log Table -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i>
+      <span>Audit Trail</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Date & Time</th>
+          <th>Product</th>
+          <th>Type</th>
+          <th>Qty</th>
+          <th>Stock Transition</th>
+          <th>Reference</th>
+          <th>User</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in movements %}
+        <tr>
+          <td>{{ m.created_at|date:"M d, Y - H:i" }}</td>
+          <td>
+            <strong>{{ m.product.name }}</strong>
+            <div style="font-size: 0.75rem; color: var(--text-light);">{{ m.product.sku }}</div>
+          </td>
+          <td>
+            {% if m.movement_type == 'sale' %}
+            <span class="badge badge-info">Sale</span>
+            {% elif m.movement_type == 'purchase' or m.movement_type == 'in' %}
+            <span class="badge badge-success">{{ m.get_movement_type_display }}</span>
+            {% elif m.movement_type == 'out' %}
+            <span class="badge badge-danger">Stock Out</span>
+            {% else %}
+            <span class="badge badge-warning">Adjustment</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if m.movement_type == 'sale' or m.movement_type == 'out' %}
+            <strong style="color: var(--danger);">-{{ m.quantity }}</strong>
+            {% else %}
+            <strong style="color: var(--success);">+{{ m.quantity }}</strong>
+            {% endif %}
+          </td>
+          <td>
+            {{ m.previous_stock }} &rarr; <strong>{{ m.new_stock }}</strong>
+          </td>
+          <td>
+            <code>{{ m.reference|default:"-" }}</code>
+            {% if m.notes %}
+            <div style="font-size: 0.75rem; color: var(--text-muted);">{{ m.notes }}</div>
+            {% endif %}
+          </td>
+          <td>{{ m.created_by.username|default:"System" }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; color: var(--text-light); padding: 32px;">
+            No stock movements recorded yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

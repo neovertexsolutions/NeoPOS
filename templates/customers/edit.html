@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Customer - {{ customer.name }}{% endblock %}
+{% block header_title %}Edit Customer Profile{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'customer_list' %}" class="btn btn-secondary">
+  <i class="fa-solid fa-arrow-left"></i> Back to Customers
+</a>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-user-pen" style="color: var(--primary);"></i>
+        <span>Update Customer Info</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="edit-cust-name">Full Name *</label>
+          <input type="text" id="edit-cust-name" name="name" value="{{ customer.name }}" class="form-control" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="edit-cust-phone">Phone Number</label>
+            <input type="text" id="edit-cust-phone" name="phone" value="{{ customer.phone|default:'' }}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-cust-email">Email Address</label>
+            <input type="email" id="edit-cust-email" name="email" value="{{ customer.email|default:'' }}" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="edit-cust-addr">Address</label>
+          <textarea id="edit-cust-addr" name="address" class="form-control" rows="3">{{ customer.address|default:'' }}</textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+          <a href="{% url 'customer_list' %}" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

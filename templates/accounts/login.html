@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In - Kelra POS System</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  
+  <style>
+    body {
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px 20px;
+      font-family: var(--font-body);
+      color: #0f172a;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.07);
+      padding: 36px 32px;
+      position: relative;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .login-brand-icon {
+      width: 54px;
+      height: 54px;
+      background: linear-gradient(135deg, #4f46e5, #6366f1);
+      color: white;
+      border-radius: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 12px;
+      box-shadow: 0 8px 16px rgba(79, 70, 229, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-brand-icon">
+        <i class="fa-solid fa-cash-register"></i>
+      </div>
+      <h2 style="font-family: var(--font-heading); font-size: 1.6rem; color: #0f172a; margin: 0 0 4px 0;">Sign In</h2>
+      <p style="font-size: 0.88rem; color: #64748b; margin: 0;">Access your POS terminal & store dashboard</p>
+    </div>
+
+    <!-- Alert Messages -->
+    {% if messages %}
+    <div style="margin-bottom: 18px;">
+      {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}" style="padding: 10px 14px; font-size: 0.86rem; border-radius: 8px;">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>{{ message }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{% url 'login' %}">
+      {% csrf_token %}
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label class="form-label" for="username" style="display: block; font-size: 0.86rem; font-weight: 600; color: #334155; margin-bottom: 6px;">Username</label>
+        <div style="position: relative;">
+          <i class="fa-solid fa-user" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+          <input type="text" id="username" name="username" class="form-control" style="padding-left: 40px; height: 44px; border: 1px solid #cbd5e1; border-radius: 10px; width: 100%;" required placeholder="Enter username" autofocus>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label class="form-label" for="password" style="display: block; font-size: 0.86rem; font-weight: 600; color: #334155; margin-bottom: 6px;">Password</label>
+        <div style="position: relative;">
+          <i class="fa-solid fa-lock" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+          <input type="password" id="password" name="password" class="form-control" style="padding-left: 40px; height: 44px; border: 1px solid #cbd5e1; border-radius: 10px; width: 100%;" required placeholder="Enter password">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width: 100%; height: 46px; border-radius: 10px; font-weight: 700; font-size: 0.95rem;">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In to Store
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 22px; font-size: 0.88rem; color: #64748b;">
+      Don't have an account yet? 
+      <a href="{% url 'register' %}" style="color: #4f46e5; font-weight: 700; text-decoration: none;">
+        Create Account &rarr;
+      </a>
+    </div>
+
+    <div style="text-align: center; margin-top: 14px; font-size: 0.82rem; color: #94a3b8;">
+      <a href="{% url 'home' %}" style="color: #64748b; text-decoration: none;">
+        <i class="fa-solid fa-arrow-left"></i> Back to Homepage
+      </a>
+    </div>
+  </div>
+</body>
+</html>

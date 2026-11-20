@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Purchase Order{% endblock %}
+{% block header_title %}New Purchase Order{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'purchases_list' %}" class="btn btn-secondary">
+  <i class="fa-solid fa-arrow-left"></i> Back to Purchases
+</a>
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 960px; margin: 0 auto;">
+  <form method="POST" id="purchase-form">
+    {% csrf_token %}
+    <input type="hidden" name="items_json" id="items-json-input">
+
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-truck-field" style="color: var(--primary);"></i>
+          <span>Supplier & Order Info</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="po-supplier">Select Supplier *</label>
+            <select id="po-supplier" name="supplier_id" class="form-control" required>
+              <option value="">-- Choose Supplier --</option>
+              {% for s in suppliers %}
+              <option value="{{ s.id }}">{{ s.name }} ({{ s.phone|default:'No phone' }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="po-status">Payment Status</label>
+            <select id="po-status" name="payment_status" class="form-control">
+              <option value="paid">Paid</option>
+              <option value="pending">Pending / On Credit</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="po-notes">Order Notes</label>
+          <input type="text" id="po-notes" name="notes" class="form-control" placeholder="Delivery notes, invoice reference, etc.">
+        </div>
+      </div>
+    </div>
+
+    <!-- Items Section -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">
+          <i class="fa-solid fa-boxes-packing" style="color: var(--primary);"></i>
+          <span>Products to Restock (Stock will increase automatically)</span>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addItemRow()">
+          <i class="fa-solid fa-plus"></i> Add Line Item
+        </button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table" id="po-items-table">
+          <thead>
+            <tr>
+              <th style="width: 45%;">Product</th>
+              <th style="width: 15%;">Quantity</th>
+              <th style="width: 20%;">Purchase Unit Price (Rs.)</th>
+              <th style="width: 15%; text-align: right;">Total (Rs.)</th>
+              <th style="width: 5%; text-align: center;"></th>
+            </tr>
+          </thead>
+          <tbody id="po-items-body">
+            <!-- Dynamic item rows inserted here -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-body" style="background: #f8fafc; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);">
+          <i class="fa-solid fa-circle-info"></i> All added quantities will be credited into the product inventory automatically.
+        </span>
+        <div style="text-align: right;">
+          <span style="font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase;">Total Purchase Cost:</span>
+          <div id="po-grand-total" style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--primary);">
+            Rs. 0.00
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="background: white;">
+        <a href="{% url 'purchases_list' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-success btn-lg">
+          <i class="fa-solid fa-check-double"></i> Save Purchase Order & Update Stock
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const productsCatalog = [
+    {% for p in products %}
+    { id: {{ p.id }}, name: "{{ p.name|escapejs }}", sku: "{{ p.sku }}", cost: {{ p.purchase_price }} },
+    {% endfor %}
+  ];
+
+  let lineItems = [];
+
+  function addItemRow(defaultProdId = null) {
+    const tbody = document.getElementById('po-items-body');
+    const rowId = Date.now() + Math.random().toString(36).substr(2, 5);
+
+    const tr = document.createElement('tr');
+    tr.id = `row-${rowId}`;
+
+    let options = '<option value="">-- Choose Product --</option>';
+    productsCatalog.forEach(p => {
+      const selected = (defaultProdId && p.id === defaultProdId) ? 'selected' : '';
+      options += `<option value="${p.id}" data-cost="${p.cost}" ${selected}>${p.name} (${p.sku})</option>`;
+    });
+
+    tr.innerHTML = `
+      <td>
+        <select class="form-control item-product-select" onchange="onProductSelect('${rowId}', this)">
+          ${options}
+        </select>
+      </td>
+      <td>
+        <input type="number" class="form-control item-qty-input" value="1" min="1" oninput="calculateRowTotal('${rowId}')">
+      </td>
+      <td>
+        <input type="number" step="0.01" min="0" class="form-control item-price-input" value="0.00" oninput="calculateRowTotal('${rowId}')">
+      </td>
+      <td style="text-align: right; font-weight: 700;" class="item-row-total">
+        Rs. 0.00
+      </td>
+      <td style="text-align: center;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="removeRow('${rowId}')" style="color: var(--danger);">
+          <i class="fa-solid fa-trash-can"></i>
+        </button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  }
+
+  function onProductSelect(rowId, selectEl) {
+    const tr = document.getElementById(`row-${rowId}`);
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    const cost = selectedOption.getAttribute('data-cost') || 0;
+    const priceInput = tr.querySelector('.item-price-input');
+    if (priceInput) priceInput.value = parseFloat(cost).toFixed(2);
+    calculateRowTotal(rowId);
+  }
+
+  function calculateRowTotal(rowId) {
+    const tr = document.getElementById(`row-${rowId}`);
+    if (!tr) return;
+
+    const qty = parseInt(tr.querySelector('.item-qty-input').value) || 0;
+    const price = parseFloat(tr.querySelector('.item-price-input').value) || 0;
+    const lineTotal = (qty * price).toFixed(2);
+
+    tr.querySelector('.item-row-total').textContent = `Rs. ${lineTotal}`;
+    calculateGrandTotal();
+  }
+
+  function removeRow(rowId) {
+    const tr = document.getElementById(`row-${rowId}`);
+    if (tr) tr.remove();
+    calculateGrandTotal();
+  }
+
+  function calculateGrandTotal() {
+    let grand = 0;
+    const rows = document.querySelectorAll('#po-items-body tr');
+    rows.forEach(tr => {
+      const qty = parseInt(tr.querySelector('.item-qty-input').value) || 0;
+      const price = parseFloat(tr.querySelector('.item-price-input').value) || 0;
+      grand += (qty * price);
+    });
+
+    document.getElementById('po-grand-total').textContent = `Rs. ${grand.toFixed(2)}`;
+  }
+
+  // Handle Form Submission
+  document.getElementById('purchase-form').addEventListener('submit', (e) => {
+    const rows = document.querySelectorAll('#po-items-body tr');
+    const items = [];
+
+    rows.forEach(tr => {
+      const prodId = tr.querySelector('.item-product-select').value;
+      const qty = parseInt(tr.querySelector('.item-qty-input').value) || 0;
+      const price = parseFloat(tr.querySelector('.item-price-input').value) || 0;
+
+      if (prodId && qty > 0) {
+        items.push({
+          product_id: parseInt(prodId),
+          quantity: qty,
+          price: price
+        });
+      }
+    });
+
+    if (items.length === 0) {
+      e.preventDefault();
+      alert('Please add at least one valid product line item.');
+      return;
+    }
+
+    document.getElementById('items-json-input').value = JSON.stringify(items);
+  });
+
+  // Start with 1 row by default
+  document.addEventListener('DOMContentLoaded', () => {
+    addItemRow();
+  });
+</script>
+{% endblock %}

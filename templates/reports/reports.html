@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reports & Analytics{% endblock %}
+{% block header_title %}Reports & Financial Analytics{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+  .report-filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 16px 20px;
+  }
+  .report-pills {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .report-date-inputs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .report-profit-card {
+    border-left: 4px solid #10b981;
+  }
+  .report-loss-card {
+    border-left: 4px solid #ef4444;
+  }
+</style>
+{% endblock %}
+
+{% block header_actions %}
+<button class="btn btn-secondary" onclick="window.print()">
+  <i class="fa-solid fa-print"></i> Print Summary
+</button>
+{% endblock %}
+
+{% block content %}
+<!-- Period Selector Filter -->
+<div class="card" style="margin-bottom: 24px;">
+  <form method="GET" class="report-filter-bar">
+    <div class="report-pills">
+      <span style="font-weight: 600; font-size: 0.88rem; color: var(--text-muted); margin-right: 4px;">
+        <i class="fa-solid fa-calendar-days"></i> Period:
+      </span>
+      <a href="?period=today" class="btn btn-sm {% if period == 'today' %}btn-primary{% else %}btn-secondary{% endif %}">Today</a>
+      <a href="?period=week" class="btn btn-sm {% if period == 'week' %}btn-primary{% else %}btn-secondary{% endif %}">Last 7 Days</a>
+      <a href="?period=month" class="btn btn-sm {% if period == 'month' %}btn-primary{% else %}btn-secondary{% endif %}">This Month</a>
+      <a href="?period=year" class="btn btn-sm {% if period == 'year' %}btn-primary{% else %}btn-secondary{% endif %}">This Year</a>
+    </div>
+
+    <div class="report-date-inputs">
+      <input type="hidden" name="period" value="custom">
+      <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" class="form-control" style="width: 140px; padding: 6px 10px; font-size: 0.85rem;" title="Start Date">
+      <span style="color: var(--text-light); font-size: 0.85rem;">to</span>
+      <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}" class="form-control" style="width: 140px; padding: 6px 10px; font-size: 0.85rem;" title="End Date">
+      <button type="submit" class="btn btn-secondary btn-sm">
+        <i class="fa-solid fa-filter"></i> Apply
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Financial Summary KPI Cards -->
+<div class="metrics-grid">
+  <!-- Total Revenue -->
+  <div class="metric-card">
+    <div class="metric-icon-box sales">
+      <i class="fa-solid fa-coins"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">Sales Revenue</span>
+      <span class="metric-value">Rs. {{ total_sales_revenue|floatformat:2 }}</span>
+      <span class="metric-sub">{{ total_sales_count }} orders processed</span>
+    </div>
+  </div>
+
+  <!-- Cost of Goods Sold -->
+  <div class="metric-card">
+    <div class="metric-icon-box cogs">
+      <i class="fa-solid fa-boxes-packing"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">Cost of Goods (COGS)</span>
+      <span class="metric-value">Rs. {{ cogs|floatformat:2 }}</span>
+      <span class="metric-sub">Wholesale product cost</span>
+    </div>
+  </div>
+
+  <!-- Operating Expenses -->
+  <div class="metric-card">
+    <div class="metric-icon-box expenses">
+      <i class="fa-solid fa-wallet"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">Operating Expenses</span>
+      <span class="metric-value" style="color: #dc2626;">Rs. {{ total_expenses|floatformat:2 }}</span>
+      <span class="metric-sub">Rent, bills & overhead</span>
+    </div>
+  </div>
+
+  <!-- Net Profit / Loss -->
+  <div class="metric-card {% if net_profit >= 0 %}report-profit-card{% else %}report-loss-card{% endif %}">
+    <div class="metric-icon-box {% if net_profit >= 0 %}profit{% else %}loss{% endif %}">
+      <i class="fa-solid fa-scale-balanced"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">
+        {% if net_profit >= 0 %}Net Profit{% else %}Net Deficit / Loss{% endif %}
+      </span>
+      <span class="metric-value" style="color: {% if net_profit >= 0 %}#16a34a{% else %}#dc2626{% endif %};">
+        Rs. {{ net_profit|floatformat:2 }}
+      </span>
+      <span class="metric-sub">Gross: Rs. {{ gross_profit|floatformat:2 }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Daily Sales vs Expenses Chart -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fa-solid fa-chart-column" style="color: var(--primary);"></i>
+      <span>Revenue vs Expenses Comparison (Last 14 Days)</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="chart-container" style="height: 320px;">
+      <canvas id="financialComparisonChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Two Columns: Top Selling Products & Payment Distribution -->
+<div class="dashboard-tables-grid">
+  <!-- Top Products Table -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-ranking-star" style="color: #f59e0b;"></i>
+        <span>Top Selling Products</span>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th style="text-align: center;">Units Sold</th>
+            <th style="text-align: right;">Revenue</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in top_products %}
+          <tr>
+            <td><strong>{{ p.product_name }}</strong></td>
+            <td style="text-align: center;">
+              <span class="badge badge-primary">{{ p.units_sold }} pcs</span>
+            </td>
+            <td style="text-align: right;"><strong>Rs. {{ p.revenue|floatformat:2 }}</strong></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" style="text-align: center; color: var(--text-light); padding: 24px;">
+              No sales recorded during this period.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Payment Methods Breakdown -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-credit-card" style="color: var(--info);"></i>
+        <span>Payment Method Breakdown</span>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th style="text-align: center;">Transactions</th>
+            <th style="text-align: right;">Total Processed</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pm in payment_methods %}
+          <tr>
+            <td>
+              <span class="badge badge-{% if pm.payment_method == 'cash' %}success{% elif pm.payment_method == 'card' %}info{% else %}warning{% endif %}" style="text-transform: uppercase;">
+                {{ pm.payment_method }}
+              </span>
+            </td>
+            <td style="text-align: center;">{{ pm.count }}</td>
+            <td style="text-align: right;"><strong>Rs. {{ pm.amount|floatformat:2 }}</strong></td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" style="text-align: center; color: var(--text-light); padding: 24px;">
+              No transactions in this period.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const ctx = document.getElementById('financialComparisonChart');
+    if (!ctx) return;
+
+    const labels = {{ daily_labels|safe }};
+    const sales = {{ daily_sales_data|safe }};
+    const expenses = {{ daily_expense_data|safe }};
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Sales Revenue (Rs.)',
+            data: sales,
+            backgroundColor: '#4f46e5',
+            borderRadius: 6,
+          },
+          {
+            label: 'Operational Expenses (Rs.)',
+            data: expenses,
+            backgroundColor: '#ef4444',
+            borderRadius: 6,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { font: { family: 'Inter', weight: '600' } } },
+          tooltip: {
+            callbacks: {
+              label: function(c) { return `${c.dataset.label}: Rs. ${c.parsed.y}`; }
+            }
+          }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: {
+            grid: { color: '#f1f5f9' },
+            ticks: {
+              callback: function(v) { return 'Rs. ' + v; }
+            }
+          }
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

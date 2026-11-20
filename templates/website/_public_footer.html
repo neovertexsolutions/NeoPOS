@@ -1,0 +1,85 @@
+{% load static %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="{% static 'css/public-footer.css' %}">
+<footer class="site-footer-white">
+  <div class="footer-top-grid shared-footer-grid">
+    <div class="footer-brand-col">
+      <a href="{% url 'home' %}" class="brand-logo">
+        <span class="footer-kelra-mark" aria-hidden="true">
+          <svg viewBox="0 0 180 150" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="footerKelraMarkGradient" x1="0%" x2="100%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#8b5cf6"/>
+                <stop offset="100%" stop-color="#6d28d9"/>
+              </linearGradient>
+            </defs>
+            <path d="M18 16 L80 16 L108 50 L120 16 L165 16 L119 77 L165 134 L120 134 L106 102 L77 134 L18 134 L62 79 L18 16 Z" fill="url(#footerKelraMarkGradient)"/>
+            <path d="M70 26 L128 26 L95 73 L74 56 Z" fill="rgba(255,255,255,0.18)"/>
+          </svg>
+        </span>
+        <span>kelra</span>
+      </a>
+      <p class="footer-desc">Empowering retail stores, supermarkets, bakeries, and boutiques with lightning-fast checkout, automated stock control, and true net profit visibility.</p>
+      <div class="footer-social-links">
+        <a href="#" class="footer-social-icon" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" class="footer-social-icon" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" class="footer-social-icon" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#" class="footer-social-icon" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="#" class="footer-social-icon" title="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px; font-size: 0.84rem; color: #059669; font-weight: 600; margin-top: 6px;"><span class="pulse-dot"></span> All Systems Operational</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Core Modules</div>
+      <ul class="footer-links-list">
+        <li><a href="{% url 'login' %}"><i class="fa-solid fa-bolt" style="color: var(--primary); width: 18px;"></i> POS Terminal</a></li>
+        <li><a href="{% url 'login' %}"><i class="fa-solid fa-warehouse" style="color: var(--accent); width: 18px;"></i> Inventory Stock</a></li>
+        <li><a href="{% url 'login' %}"><i class="fa-solid fa-truck-ramp-box" style="color: #d97706; width: 18px;"></i> Purchase Orders</a></li>
+        <li><a href="{% url 'login' %}"><i class="fa-solid fa-receipt" style="color: var(--secondary); width: 18px;"></i> Sales & Invoices</a></li>
+        <li><a href="{% url 'login' %}"><i class="fa-solid fa-users" style="color: #9333ea; width: 18px;"></i> Customer Ledger</a></li>
+        <li><a href="{% url 'login' %}"><i class="fa-solid fa-chart-line" style="color: #ef4444; width: 18px;"></i> Profit & Reports</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Solutions</div>
+      <ul class="footer-links-list">
+        <li><a href="{% url 'home' %}#features">Grocery & Supermarts</a></li>
+        <li><a href="{% url 'home' %}#features">Bakeries & Confectionery</a></li>
+        <li><a href="{% url 'home' %}#features">Fashion & Boutiques</a></li>
+        <li><a href="{% url 'home' %}#features">Electronics & Mobile</a></li>
+        <li><a href="{% url 'home' %}#features">Convenience Stores</a></li>
+        <li><a href="{% url 'home' %}#features">Wholesale Distributors</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Resources</div>
+      <ul class="footer-links-list">
+        <li><a href="{% url 'hardware_support' %}">Barcode Setup Guide</a></li>
+        <li><a href="{% url 'hardware_support' %}">Thermal Printer Drivers</a></li>
+        <li><a href="{% url 'security' %}">Security & Backups</a></li>
+        <li><a href="{% url 'privacy_policy' %}">Data Privacy</a></li>
+        <li><a href="{% url 'pricing_page' %}">Plan Comparison</a></li>
+        <li><a href="{% url 'login' %}">Staff Sign In</a></li>
+      </ul>
+    </div>
+    <div class="newsletter-box">
+      <div class="footer-col-title">Stay Updated</div>
+      <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.5;">Subscribe for software updates, retail growth tactics, and new feature announcements.</p>
+      <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed successfully!');">
+        <input type="email" class="newsletter-input" required placeholder="Enter work email">
+        <button type="submit" class="newsletter-btn" aria-label="Subscribe"><i class="fa-solid fa-paper-plane"></i></button>
+      </form>
+      <div style="font-size: 0.8rem; color: var(--text-light); margin-top: 4px;"><i class="fa-solid fa-shield-halved"></i> No spam. Unsubscribe anytime.</div>
+    </div>
+  </div>
+  <div class="footer-bottom-bar">
+    <div>&copy; 2026 Kelra System.</div>
+    <div class="footer-bottom-links">
+      <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+      <a href="{% url 'terms_of_service' %}">Terms of Service</a>
+      <a href="{% url 'security' %}">Security</a>
+      <a href="{% url 'hardware_support' %}">Hardware Support</a>
+    </div>
+    <div style="color: var(--primary); font-weight: 600;">Made with <i class="fa-solid fa-heart" style="color: #ef4444;"></i> for Retail Stores</div>
+  </div>
+</footer>

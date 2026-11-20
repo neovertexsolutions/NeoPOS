@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Products Catalog{% endblock %}
+{% block header_title %}Product Management{% endblock %}
+
+{% block header_actions %}
+<div style="display: flex; gap: 10px;">
+  <a href="{% url 'category_list' %}" class="btn btn-secondary">
+    <i class="fa-solid fa-tags"></i> Manage Categories
+  </a>
+  <a href="{% url 'product_add' %}" class="btn btn-primary">
+    <i class="fa-solid fa-plus"></i> Add Product
+  </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Search & Filters -->
+<div class="card" style="padding: 18px 24px; margin-bottom: 20px;">
+  <form method="GET" style="display: flex; gap: 14px; flex-wrap: wrap; align-items: center;">
+    <div style="flex: 2; min-width: 220px;">
+      <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search by name, SKU or barcode...">
+    </div>
+    <div style="flex: 1; min-width: 160px;">
+      <select name="category" class="form-control">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <label style="font-size: 0.88rem; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+        <input type="checkbox" name="low_stock" value="1" {% if filter_low_stock == '1' %}checked{% endif %}>
+        Low Stock Only
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary">
+      <i class="fa-solid fa-filter"></i> Apply
+    </button>
+    {% if query or selected_category or filter_low_stock %}
+    <a href="{% url 'product_list' %}" class="btn btn-secondary">Clear</a>
+    {% endif %}
+  </form>
+</div>
+
+<!-- Products Table -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fa-solid fa-boxes-stacked" style="color: var(--primary);"></i>
+      <span>Products Inventory</span>
+    </div>
+    <span class="badge badge-info">{{ products|length }} Items</span>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU / Barcode</th>
+          <th>Category</th>
+          <th>Cost Price</th>
+          <th>Selling Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th style="text-align: right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in products %}
+        <tr>
+          <td>
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 40px; height: 40px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0;">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <i class="fa-solid fa-box" style="color: #94a3b8;"></i>
+                {% endif %}
+              </div>
+              <div>
+                <strong>{{ product.name }}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-light);">Added {{ product.created_at|date:"M d, Y" }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span style="font-family: monospace; font-size: 0.85rem; font-weight: 600;">{{ product.sku }}</span>
+            {% if product.barcode %}
+            <div style="font-size: 0.75rem; color: var(--text-light);"><i class="fa-solid fa-barcode"></i> {{ product.barcode }}</div>
+            {% endif %}
+          </td>
+          <td>{{ product.category.name|default:"Uncategorized" }}</td>
+          <td>Rs. {{ product.purchase_price|floatformat:2 }}</td>
+          <td><strong style="color: var(--primary);">Rs. {{ product.selling_price|floatformat:2 }}</strong></td>
+          <td>
+            <strong>{{ product.stock }}</strong>
+            <span style="font-size: 0.75rem; color: var(--text-light);">/ min {{ product.minimum_stock }}</span>
+          </td>
+          <td>
+            {% if product.stock <= 0 %}
+            <span class="badge badge-danger">Out of Stock</span>
+            {% elif product.is_low_stock %}
+            <span class="badge badge-warning">Low Stock</span>
+            {% else %}
+            <span class="badge badge-success">In Stock</span>
+            {% endif %}
+          </td>
+          <td style="text-align: right;">
+            <div style="display: inline-flex; gap: 6px;">
+              <a href="{% url 'product_edit' product.id %}" class="btn btn-secondary btn-sm" title="Edit Product">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </a>
+              <form method="POST" action="{% url 'product_delete' product.id %}" onsubmit="return confirm('Remove this product?');" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary btn-sm" style="color: var(--danger);" title="Delete Product">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" style="text-align: center; color: var(--text-light); padding: 32px;">
+            No products found. Click "Add Product" to create your first item.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

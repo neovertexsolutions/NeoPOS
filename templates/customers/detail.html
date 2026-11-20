@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ customer.name }} - Purchase History{% endblock %}
+{% block header_title %}Customer Profile & History{% endblock %}
+
+{% block header_actions %}
+<div style="display: flex; gap: 10px;">
+  <a href="{% url 'customer_edit' customer.id %}" class="btn btn-secondary">
+    <i class="fa-solid fa-pen"></i> Edit Profile
+  </a>
+  <a href="{% url 'customer_list' %}" class="btn btn-secondary">
+    <i class="fa-solid fa-arrow-left"></i> Back to Customers
+  </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Customer Profile Card -->
+<div class="card" style="margin-bottom: 24px;">
+  <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: gap; gap: 20px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+        <div class="user-avatar" style="width: 48px; height: 48px; font-size: 1.2rem; background: var(--primary);">
+          {{ customer.name|first|upper }}
+        </div>
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.4rem;">{{ customer.name }}</h2>
+          <span style="font-size: 0.85rem; color: var(--text-light);">Customer since {{ customer.created_at|date:"F Y" }}</span>
+        </div>
+      </div>
+      <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">
+        <span><i class="fa-solid fa-phone"></i> {{ customer.phone|default:"No phone" }}</span> &bull;
+        <span><i class="fa-solid fa-envelope"></i> {{ customer.email|default:"No email" }}</span> &bull;
+        <span><i class="fa-solid fa-location-dot"></i> {{ customer.address|default:"No address" }}</span>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px; text-align: right;">
+      <div>
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Orders</span>
+        <div style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700;">{{ sales.count }}</div>
+      </div>
+      <div>
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Spent</span>
+        <div style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--primary);">
+          Rs. {{ total_spent|floatformat:2 }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Past Purchases Table -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fa-solid fa-clock-rotate-left" style="color: var(--primary);"></i>
+      <span>Purchase History</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Invoice #</th>
+          <th>Date</th>
+          <th>Items Purchased</th>
+          <th>Total Amount</th>
+          <th>Payment</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sale in sales %}
+        <tr>
+          <td><strong style="color: var(--primary);">#{{ sale.invoice_number }}</strong></td>
+          <td>{{ sale.created_at|date:"M d, Y - H:i" }}</td>
+          <td>
+            {% for item in sale.items.all %}
+            <span style="display: inline-block; background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; margin: 2px;">
+              {{ item.product_name }} &times; {{ item.quantity }}
+            </span>
+            {% endfor %}
+          </td>
+          <td><strong>Rs. {{ sale.total|floatformat:2 }}</strong></td>
+          <td>
+            <span class="badge badge-{% if sale.payment_method == 'cash' %}success{% elif sale.payment_method == 'card' %}info{% else %}warning{% endif %}">
+              {{ sale.get_payment_method_display }}
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <a href="{% url 'invoice_detail' sale.id %}" class="btn btn-secondary btn-sm" title="View Invoice">
+              <i class="fa-solid fa-receipt"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align: center; color: var(--text-light); padding: 32px;">
+            No purchase records found for this customer.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

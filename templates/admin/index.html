@@ -1,0 +1,591 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  .saas-card {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .saas-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+  .plan-card {
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 20px;
+    background: #ffffff;
+    transition: all 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .plan-card:hover {
+    border-color: #4f46e5;
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.1);
+  }
+  .plan-card.highlight {
+    border: 2px solid #7c3aed;
+    background: linear-gradient(180deg, rgba(124, 58, 237, 0.03) 0%, #ffffff 100%);
+  }
+  .license-badge {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    background: #f1f5f9;
+    border: 1px dashed #cbd5e1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #0f172a;
+    font-weight: 700;
+  }
+  .table-saas th {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    border-top: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+
+  <!-- ==========================================
+       TOP ROW: EXECUTIVE SAAS METRICS
+       ========================================== -->
+  <div class="row g-3 mb-4">
+    <!-- 1. Total Registered Users -->
+    <div class="col-xl-3 col-sm-6">
+      <div class="card saas-card bg-white h-100" style="border-left: 5px solid #4f46e5 !important;">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="text-muted text-uppercase fw-bold" style="font-size: 11px; letter-spacing: 0.06em;">Total Users & Stores</span>
+            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background: rgba(79, 70, 229, 0.12); width: 42px; height: 42px;">
+              <i class="fas fa-users text-primary fa-lg"></i>
+            </div>
+          </div>
+          <div class="fs-2 fw-bolder text-dark mb-1 d-flex align-items-center">
+            {{ saas_metrics.total_users }}
+            {% if saas_metrics.blocked_users_count > 0 %}
+            <span class="badge bg-danger ms-2" style="font-size: 11px; font-weight: 700;">
+              <i class="fas fa-ban me-1"></i>{{ saas_metrics.blocked_users_count }} Blocked
+            </span>
+            {% else %}
+            <span class="badge bg-success-subtle text-success ms-2" style="font-size: 11px; font-weight: 700;">
+              <i class="fas fa-check-circle me-1"></i>All Active
+            </span>
+            {% endif %}
+          </div>
+          <div class="d-flex gap-2 text-muted" style="font-size: 12px;">
+            <span><strong class="text-danger">{{ saas_metrics.admin_count }}</strong> Admins</span> • 
+            <span><strong class="text-info">{{ saas_metrics.manager_count }}</strong> Managers</span> • 
+            <span><strong class="text-secondary">{{ saas_metrics.cashier_count }}</strong> Cashiers</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Software Subscription Revenue (MRR) -->
+    <div class="col-xl-3 col-sm-6">
+      <div class="card saas-card bg-white h-100" style="border-left: 5px solid #059669 !important;">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="text-success text-uppercase fw-bold" style="font-size: 11px; letter-spacing: 0.06em;">Software Sales (MRR)</span>
+            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background: rgba(5, 150, 105, 0.12); width: 42px; height: 42px;">
+              <i class="fas fa-sack-dollar text-success fa-lg"></i>
+            </div>
+          </div>
+          <div class="fs-2 fw-bolder text-success mb-1">Rs. {{ saas_metrics.software_sales_mrr }}</div>
+          <div class="text-muted" style="font-size: 12px;">
+            Annual Projected (ARR): <strong class="text-dark">Rs. {{ saas_metrics.software_sales_arr }}</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 14-Day Free Trials -->
+    <div class="col-xl-3 col-sm-6">
+      <div class="card saas-card bg-white h-100" style="border-left: 5px solid #d97706 !important;">
+        <div class="card-body p-3">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="text-warning text-uppercase fw-bold" style="font-size: 11px; letter-spacing: 0.06em;">14-Day Free Trials</span>
+            <div class="rounded-circle p-2 d-flex align-items-center justify-content-center" style="background: rgba(217, 119, 6, 0.12); width: 42px; height: 42px;">
+              <i class="fas fa-hourglass-half text-warning fa-lg"></i>
+            </div>
+          </div>
+          <div class="fs-2 fw-bolder text-dark mb-1">{{ saas_metrics.active_trials }} <span class="fs-6 fw-semibold text-success">Active</span></div>
+          <div class="text-muted" style="font-size: 12px;">
+            <span class="text-danger fw-bold">{{ saas_metrics.expired_trials }}</span> Expired Trials • <span class="text-primary fw-bold">{{ saas_metrics.no_expiry }}</span> Permanent
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ==========================================
+       MIDDLE ROW: CHARTS & GRAPHS
+       ========================================== -->
+  <div class="row g-3 mb-4">
+    <!-- Chart 1: Software Revenue & Signups Growth -->
+    <div class="col-lg-8">
+      <div class="card saas-card bg-white h-100">
+        <div class="card-header bg-transparent border-0 pt-3 pb-0 d-flex align-items-center justify-content-between">
+          <div>
+            <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-chart-line text-primary me-2"></i>Software Sales & Growth Report</h5>
+            <small class="text-muted">Estimated recurring revenue trend (Past 6 Months)</small>
+          </div>
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+            <i class="fas fa-arrow-trend-up me-1"></i> Growing
+          </span>
+        </div>
+        <div class="card-body p-3">
+          <div style="height: 280px; position: relative;">
+            <canvas id="revenueGrowthChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart 2: Plan & Trial Breakdown -->
+    <div class="col-lg-4">
+      <div class="card saas-card bg-white h-100">
+        <div class="card-header bg-transparent border-0 pt-3 pb-0">
+          <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-pie-chart text-purple me-2" style="color: #7c3aed;"></i>Plan Distribution</h5>
+          <small class="text-muted">Current subscribers by tier</small>
+        </div>
+        <div class="card-body p-3 d-flex flex-column align-items-center justify-content-center">
+          <div style="width: 220px; height: 220px; position: relative;">
+            <canvas id="planDistributionChart"></canvas>
+          </div>
+          <div class="d-flex justify-content-around w-100 mt-3 text-center" style="font-size: 12px;">
+            <div>
+              <span class="d-inline-block rounded-circle me-1" style="width: 8px; height: 8px; background: #0284c7;"></span>
+              Starter: <strong>{{ saas_metrics.starter_count }}</strong>
+            </div>
+            <div>
+              <span class="d-inline-block rounded-circle me-1" style="width: 8px; height: 8px; background: #7c3aed;"></span>
+              Business: <strong>{{ saas_metrics.business_count }}</strong>
+            </div>
+            <div>
+              <span class="d-inline-block rounded-circle me-1" style="width: 8px; height: 8px; background: #d97706;"></span>
+              Enterprise: <strong>{{ saas_metrics.enterprise_count }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       PLANS & UPGRADE CARDS ROW
+       ========================================== -->
+  <div class="card saas-card bg-white mb-4">
+    <div class="card-header bg-transparent border-0 pt-3 pb-2 d-flex align-items-center justify-content-between">
+      <div>
+        <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-layer-group text-primary me-2"></i>Subscription Plans & License Tiers</h5>
+        <small class="text-muted">Manage pricing tiers and instant upgrades for retail stores</small>
+      </div>
+      <a href="{% url 'admin:accounts_user_changelist' %}" class="btn btn-sm btn-outline-primary">
+        <i class="fas fa-users-cog me-1"></i> Open Full User Manager
+      </a>
+    </div>
+    <div class="card-body pt-0 pb-3">
+      <div class="row g-3">
+        <!-- Starter Plan -->
+        <div class="col-md-4">
+          <div class="plan-card">
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-primary-subtle text-primary border px-2 py-1">Basic Retail</span>
+                <span class="fw-bold text-muted" style="font-size: 12px;">{{ saas_metrics.starter_count }} Stores Subscribed</span>
+              </div>
+              <h4 class="fw-bolder text-dark mb-1">Starter Plan</h4>
+              <div class="fs-3 fw-bold text-primary mb-3">Rs. 999 <span class="fs-6 text-muted fw-normal">/ month</span></div>
+              <ul class="list-unstyled text-muted" style="font-size: 13px; line-height: 1.8;">
+                <li><i class="fas fa-check text-success me-2"></i> 1 Cashier Terminal Screen</li>
+                <li><i class="fas fa-check text-success me-2"></i> Up to 500 Product Catalog</li>
+                <li><i class="fas fa-check text-success me-2"></i> Thermal Printer Support (80mm)</li>
+                <li><i class="fas fa-check text-success me-2"></i> Daily Sales Shift Report</li>
+              </ul>
+            </div>
+            <div class="pt-3 border-top mt-2">
+              <span class="text-muted" style="font-size: 11px;">Best for small grocery kiosks & cafes.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Business Plan (POPULAR) -->
+        <div class="col-md-4">
+          <div class="plan-card highlight position-relative">
+            <span class="position-absolute top-0 end-0 badge text-white px-3 py-1 rounded-pill" style="background: #7c3aed; transform: translate(-15px, -12px); font-size: 11px;">
+              MOST POPULAR
+            </span>
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-purple-subtle text-purple border px-2 py-1" style="color: #7c3aed;">Supermarket Edition</span>
+                <span class="fw-bold text-muted" style="font-size: 12px;">{{ saas_metrics.business_count }} Stores Subscribed</span>
+              </div>
+              <h4 class="fw-bolder text-dark mb-1">Business Plan</h4>
+              <div class="fs-3 fw-bold mb-3" style="color: #7c3aed;">Rs. 2,499 <span class="fs-6 text-muted fw-normal">/ month</span></div>
+              <ul class="list-unstyled text-muted" style="font-size: 13px; line-height: 1.8;">
+                <li><i class="fas fa-check text-success me-2"></i> Unlimited Cashier Terminals</li>
+                <li><i class="fas fa-check text-success me-2"></i> Unlimited Products & Barcodes</li>
+                <li><i class="fas fa-check text-success me-2"></i> Supplier POs & Warehouse Stock</li>
+                <li><i class="fas fa-check text-success me-2"></i> True Net Profit & Expense Ledger</li>
+                <li><i class="fas fa-check text-success me-2"></i> Automated Low Stock SMS Alerts</li>
+              </ul>
+            </div>
+            <div class="pt-3 border-top mt-2">
+              <span class="text-muted" style="font-size: 11px;">Ideal for busy supermarkets & retail boutiques.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="col-md-4">
+          <div class="plan-card">
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge bg-warning-subtle text-warning border px-2 py-1" style="color: #b45309;">Multi-Branch / Franchise</span>
+                <span class="fw-bold text-muted" style="font-size: 12px;">{{ saas_metrics.enterprise_count }} Stores Subscribed</span>
+              </div>
+              <h4 class="fw-bolder text-dark mb-1">Enterprise Plan</h4>
+              <div class="fs-3 fw-bold text-warning mb-3" style="color: #b45309;">Rs. 4,999 <span class="fs-6 text-muted fw-normal">/ custom</span></div>
+              <ul class="list-unstyled text-muted" style="font-size: 13px; line-height: 1.8;">
+                <li><i class="fas fa-check text-success me-2"></i> Multi-Branch Cloud Syncing</li>
+                <li><i class="fas fa-check text-success me-2"></i> Dedicated Database Instance</li>
+                <li><i class="fas fa-check text-success me-2"></i> Custom Thermal Receipt Branding</li>
+                <li><i class="fas fa-check text-success me-2"></i> 24/7 Dedicated Hardware VIP Support</li>
+                <li><i class="fas fa-check text-success me-2"></i> Electronic Weighing Scale Drivers</li>
+              </ul>
+            </div>
+            <div class="pt-3 border-top mt-2">
+              <span class="text-muted" style="font-size: 11px;">For multi-outlet chains and distributors.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       USER MANAGEMENT & 14-DAY TRIAL CONTROL TABLE
+       ========================================== -->
+  <div class="card saas-card bg-white mb-4">
+    <div class="card-header bg-transparent border-0 pt-3 pb-2 d-flex align-items-center justify-content-between">
+      <div>
+        <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-users-cog text-primary me-2"></i>User & License Management Console</h5>
+        <small class="text-muted">Directly extend 14-day trials, issue licenses, or upgrade user plans</small>
+      </div>
+      <a href="{% url 'admin:accounts_user_add' %}" class="btn btn-sm btn-primary">
+        <i class="fas fa-user-plus me-1"></i> Add New Store / User
+      </a>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover table-saas align-middle mb-0">
+          <thead class="bg-light">
+            <tr>
+              <th class="ps-3">User & Store</th>
+              <th>Role</th>
+              <th>Plan Tier</th>
+              <th>14-Day Trial / License Status</th>
+              <th>Generated License Key</th>
+              <th>Status</th>
+              <th class="text-end pe-3">Instant Actions (1-Click)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for u in recent_users_list %}
+            <tr>
+              <!-- User & Store -->
+              <td class="ps-3">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="rounded-circle text-white d-flex align-items-center justify-content-center fw-bold" style="width: 36px; height: 36px; background: {% if u.role == 'admin' %}#4f46e5{% elif u.role == 'manager' %}#0284c7{% else %}#10b981{% endif %}; font-size: 13px;">
+                    {{ u.username|first|upper }}
+                  </div>
+                  <div>
+                    <a href="{% url 'admin:accounts_user_change' u.id %}" class="fw-bold text-dark text-decoration-none">
+                      {{ u.get_full_name|default:u.username }}
+                    </a>
+                    <div class="text-muted" style="font-size: 11px;">
+                      <code>@{{ u.username }}</code> • {{ u.store_name|default:"Retail Store" }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Role -->
+              <td>
+                {% if u.role == 'admin' %}
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Admin</span>
+                {% elif u.role == 'manager' %}
+                <span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1">Manager</span>
+                {% else %}
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1">Cashier</span>
+                {% endif %}
+              </td>
+
+              <!-- Plan Tier -->
+              <td>
+                {% if u.plan == 'starter' %}
+                <span class="badge bg-primary-subtle text-primary border px-2 py-1">Starter</span>
+                {% elif u.plan == 'business' %}
+                <span class="badge text-white px-2 py-1" style="background: #7c3aed;">Business</span>
+                {% elif u.plan == 'enterprise' %}
+                <span class="badge bg-warning text-dark px-2 py-1">Enterprise</span>
+                {% else %}
+                <span class="badge bg-light text-dark border px-2 py-1">{{ u.plan }}</span>
+                {% endif %}
+              </td>
+
+              <!-- Trial Status -->
+              <td>
+                {% if not u.trial_ends_at %}
+                <span class="badge bg-secondary-subtle text-secondary border px-2 py-1">
+                  <i class="fas fa-infinity me-1"></i> Lifetime License
+                </span>
+                {% elif u.days_left_trial == 0 %}
+                <span class="badge bg-danger text-white px-2 py-1">
+                  <i class="fas fa-times-circle me-1"></i> Trial Expired
+                </span>
+                {% elif u.days_left_trial <= 3 %}
+                <span class="badge bg-warning text-dark px-2 py-1">
+                  <i class="fas fa-exclamation-triangle me-1"></i> {{ u.days_left_trial }}d left (Ending)
+                </span>
+                {% else %}
+                <span class="badge bg-success text-white px-2 py-1">
+                  <i class="fas fa-check-circle me-1"></i> Active ({{ u.days_left_trial }}d left)
+                </span>
+                {% endif %}
+                <div class="text-muted mt-1" style="font-size: 10px;">
+                  Expires: {{ u.trial_ends_at|default:"No Expiration" }}
+                </div>
+              </td>
+
+              <!-- License Key -->
+              <td>
+                <span class="license-badge" title="Click to copy" onclick="navigator.clipboard.writeText('{{ u.license_key }}'); alert('Copied license key: {{ u.license_key }}');" style="cursor: pointer;">
+                  <i class="fa-regular fa-copy me-1"></i>{{ u.license_key }}
+                </span>
+              </td>
+
+              <!-- Status -->
+              <td>
+                {% if u.is_active %}
+                <span class="badge bg-success text-white px-2 py-1"><i class="fas fa-check-circle me-1"></i>Active</span>
+                {% else %}
+                <span class="badge bg-danger text-white px-2 py-1"><i class="fas fa-ban me-1"></i>BLOCKED</span>
+                {% endif %}
+              </td>
+
+              <!-- Actions Dropdown / Quick Buttons -->
+              <td class="text-end pe-3">
+                <div class="d-flex align-items-center justify-content-end gap-1">
+                  <!-- Direct 1-Click Block / Unblock User -->
+                  {% if u.is_active %}
+                  <form method="POST" action="{% url 'manage_user_action' %}" onsubmit="return confirm('Block user {{ u.username }}? They will not be able to log in or use the POS terminal.');">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ u.id }}">
+                    <input type="hidden" name="action" value="block_user">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" title="Block User" style="font-size: 11px; padding: 3px 8px; font-weight: 600;">
+                      <i class="fas fa-ban me-1"></i>Block
+                    </button>
+                  </form>
+                  {% else %}
+                  <form method="POST" action="{% url 'manage_user_action' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="user_id" value="{{ u.id }}">
+                    <input type="hidden" name="action" value="unblock_user">
+                    <button type="submit" class="btn btn-sm btn-success text-white" title="Unblock User" style="font-size: 11px; padding: 3px 8px; font-weight: 600;">
+                      <i class="fas fa-unlock me-1"></i>Unblock
+                    </button>
+                  </form>
+                  {% endif %}
+
+                  <!-- Management & Upgrade Dropdown -->
+                  <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 11px; padding: 3px 8px;">
+                      <i class="fas fa-sliders-h me-1"></i> Manage
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow" style="font-size: 13px;">
+                      <li><h6 class="dropdown-header">Subscription Plan Upgrade</h6></li>
+                      <li>
+                        <form method="POST" action="{% url 'manage_user_action' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{ u.id }}">
+                          <input type="hidden" name="action" value="set_plan_starter">
+                          <button type="submit" class="dropdown-item"><i class="fas fa-box text-primary me-2"></i> Starter Plan (Rs. 999)</button>
+                        </form>
+                      </li>
+                      <li>
+                        <form method="POST" action="{% url 'manage_user_action' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{ u.id }}">
+                          <input type="hidden" name="action" value="set_plan_business">
+                          <button type="submit" class="dropdown-item"><i class="fas fa-briefcase text-purple me-2" style="color: #7c3aed;"></i> Business Plan (Rs. 2,499)</button>
+                        </form>
+                      </li>
+                      <li>
+                        <form method="POST" action="{% url 'manage_user_action' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{ u.id }}">
+                          <input type="hidden" name="action" value="set_plan_enterprise">
+                          <button type="submit" class="dropdown-item"><i class="fas fa-crown text-warning me-2"></i> Enterprise Plan (Custom)</button>
+                        </form>
+                      </li>
+                      <li><hr class="dropdown-divider"></li>
+                      <li><h6 class="dropdown-header">Software License & Trial Controls</h6></li>
+                      <li>
+                        <form method="POST" action="{% url 'manage_user_action' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{ u.id }}">
+                          <input type="hidden" name="action" value="extend_14">
+                          <button type="submit" class="dropdown-item text-success"><i class="fas fa-plus-circle me-2"></i> Extend 14-Day Free Access</button>
+                        </form>
+                      </li>
+                      <li>
+                        <form method="POST" action="{% url 'manage_user_action' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{ u.id }}">
+                          <input type="hidden" name="action" value="extend_30">
+                          <button type="submit" class="dropdown-item text-success"><i class="fas fa-calendar-plus me-2"></i> Add +30 Days Access</button>
+                        </form>
+                      </li>
+                      <li>
+                        <form method="POST" action="{% url 'manage_user_action' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{ u.id }}">
+                          <input type="hidden" name="action" value="set_lifetime">
+                          <button type="submit" class="dropdown-item text-primary"><i class="fas fa-infinity me-2"></i> Set Permanent Lifetime License</button>
+                        </form>
+                      </li>
+                      <li>
+                        <form method="POST" action="{% url 'manage_user_action' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{ u.id }}">
+                          <input type="hidden" name="action" value="block_software">
+                          <button type="submit" class="dropdown-item text-danger"><i class="fas fa-lock me-2"></i> Block Software (Revoke License)</button>
+                        </form>
+                      </li>
+                      <li>
+                        <form method="POST" action="{% url 'manage_user_action' %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{ u.id }}">
+                          <input type="hidden" name="action" value="unblock_software">
+                          <button type="submit" class="dropdown-item text-success"><i class="fas fa-lock-open me-2"></i> Unblock Software (+14d Trial)</button>
+                        </form>
+                      </li>
+                    </ul>
+                    <a href="{% url 'admin:accounts_user_change' u.id %}" class="btn btn-outline-secondary" title="Edit in Admin" style="font-size: 11px; padding: 3px 8px;">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const months = JSON.parse('{{ months_json|safe }}');
+    const revenueData = JSON.parse('{{ revenue_trend_json|safe }}');
+    const signupsData = JSON.parse('{{ signups_trend_json|safe }}');
+    const revenueCanvas = document.getElementById('revenueGrowthChart');
+
+    if (revenueCanvas) {
+      new Chart(revenueCanvas, {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [
+            {
+              label: 'Software Recurring Sales (Rs.)',
+              data: revenueData,
+              borderColor: '#4f46e5',
+              backgroundColor: 'rgba(79, 70, 229, 0.1)',
+              borderWidth: 3,
+              fill: true,
+              tension: 0.35,
+              yAxisID: 'y'
+            },
+            {
+              label: 'Active Stores / Signups',
+              data: signupsData,
+              borderColor: '#10b981',
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.35,
+              yAxisID: 'y1'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: { display: true, text: 'Monthly Sales (Rs.)' },
+              grid: { color: '#f1f5f9' }
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              title: { display: true, text: 'Stores' }
+            },
+            x: { grid: { display: false } }
+          },
+          plugins: { legend: { position: 'top' } }
+        }
+      });
+    }
+
+    const planData = JSON.parse('{{ plan_chart_json|safe }}');
+    const planCanvas = document.getElementById('planDistributionChart');
+
+    if (planCanvas) {
+      new Chart(planCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: planData.labels,
+          datasets: [{
+            data: planData.data,
+            backgroundColor: planData.colors,
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%',
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

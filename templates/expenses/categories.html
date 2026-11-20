@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Expense Categories{% endblock %}
+{% block header_title %}Expense Categories{% endblock %}
+
+{% block header_actions %}
+<a href="{% url 'expenses_list' %}" class="btn btn-secondary">
+  <i class="fa-solid fa-arrow-left"></i> Back to Expenses
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-grid-2">
+  <!-- Categories List -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-tags" style="color: var(--primary);"></i>
+        <span>Categories</span>
+      </div>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Total Expenses</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for cat in categories %}
+          <tr>
+            <td><strong>{{ cat.name }}</strong></td>
+            <td style="color: var(--text-muted); font-size: 0.85rem;">{{ cat.description|default:"-" }}</td>
+            <td>
+              <span class="badge badge-info">{{ cat.expenses.count }} records</span>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="3" style="text-align: center; color: var(--text-light); padding: 24px;">
+              No categories created yet.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add Category Form -->
+  <div class="card" style="height: fit-content;">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-plus-circle" style="color: var(--success);"></i>
+        <span>Add Expense Category</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="exp-cat-name">Category Name *</label>
+          <input type="text" id="exp-cat-name" name="name" class="form-control" required placeholder="e.g. Staff Salaries, Cleaning">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="exp-cat-desc">Description</label>
+          <textarea id="exp-cat-desc" name="description" class="form-control" rows="3" placeholder="Category notes..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">
+          <i class="fa-solid fa-check"></i> Save Category
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

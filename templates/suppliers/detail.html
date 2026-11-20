@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ supplier.name }} - Supplier Profile{% endblock %}
+{% block header_title %}Supplier Profile & Orders{% endblock %}
+
+{% block header_actions %}
+<div style="display: flex; gap: 10px;">
+  <a href="{% url 'supplier_edit' supplier.id %}" class="btn btn-secondary">
+    <i class="fa-solid fa-pen"></i> Edit Profile
+  </a>
+  <a href="{% url 'purchase_add' %}" class="btn btn-primary">
+    <i class="fa-solid fa-plus"></i> New Purchase Order
+  </a>
+  <a href="{% url 'supplier_list' %}" class="btn btn-secondary">
+    <i class="fa-solid fa-arrow-left"></i> Back to Suppliers
+  </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Supplier Profile Card -->
+<div class="card" style="margin-bottom: 24px;">
+  <div class="card-body" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+        <div class="user-avatar" style="width: 48px; height: 48px; font-size: 1.2rem; background: var(--info);">
+          <i class="fa-solid fa-building"></i>
+        </div>
+        <div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.4rem;">{{ supplier.name }}</h2>
+          <span style="font-size: 0.85rem; color: var(--text-light);">Vendor partner since {{ supplier.created_at|date:"F Y" }}</span>
+        </div>
+      </div>
+      <div style="color: var(--text-muted); font-size: 0.9rem; margin-top: 8px;">
+        <span><i class="fa-solid fa-phone"></i> {{ supplier.phone|default:"No phone" }}</span> &bull;
+        <span><i class="fa-solid fa-envelope"></i> {{ supplier.email|default:"No email" }}</span> &bull;
+        <span><i class="fa-solid fa-location-dot"></i> {{ supplier.address|default:"No address" }}</span>
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 24px; text-align: right;">
+      <div>
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Orders</span>
+        <div style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700;">{{ purchases.count }}</div>
+      </div>
+      <div>
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Total Supplies Cost</span>
+        <div style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--primary);">
+          Rs. {{ total_spent|floatformat:2 }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Past Purchase Orders Table -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fa-solid fa-boxes-packing" style="color: var(--primary);"></i>
+      <span>Order History with this Supplier</span>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Reference #</th>
+          <th>Date</th>
+          <th>Items Received</th>
+          <th>Order Total</th>
+          <th>Status</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for po in purchases %}
+        <tr>
+          <td><strong style="color: var(--primary);">#{{ po.reference_no }}</strong></td>
+          <td>{{ po.created_at|date:"M d, Y - H:i" }}</td>
+          <td>{{ po.items.count }} item(s)</td>
+          <td><strong>Rs. {{ po.total|floatformat:2 }}</strong></td>
+          <td>
+            <span class="badge badge-{% if po.payment_status == 'paid' %}success{% else %}warning{% endif %}">
+              {{ po.get_payment_status_display }}
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <a href="{% url 'purchase_detail' po.id %}" class="btn btn-secondary btn-sm" title="View Order">
+              <i class="fa-solid fa-eye"></i> Details
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="6" style="text-align: center; color: var(--text-light); padding: 32px;">
+            No purchase orders with this supplier yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

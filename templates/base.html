@@ -1,0 +1,185 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard{% endblock %} - Kelra</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260927-2">
+  {% block extra_css %}{% endblock %}
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="app-sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">K</div>
+        <div class="brand-title">Kelra</div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="{% url 'dashboard' %}" class="nav-item {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>Dashboard</span>
+        </a>
+
+        <a href="{% url 'pos_terminal' %}" class="nav-item pos-highlight {% if request.resolver_match.url_name == 'pos_terminal' %}active{% endif %}">
+          <i class="fa-solid fa-barcode"></i>
+          <span>POS Terminal</span>
+        </a>
+
+        <div class="nav-section-title">Catalog & Stock</div>
+
+        <a href="{% url 'product_list' %}" class="nav-item {% if 'products' in request.path and not 'categories' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-box-archive"></i>
+          <span>Products</span>
+        </a>
+
+        <a href="{% url 'category_list' %}" class="nav-item {% if 'categories' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-tags"></i>
+          <span>Categories</span>
+        </a>
+
+        <a href="{% url 'inventory_list' %}" class="nav-item {% if 'inventory' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-warehouse"></i>
+          <span>Inventory</span>
+        </a>
+
+        <a href="{% url 'barcode_list' %}" class="nav-item {% if 'barcode' in request.path or 'qrcode' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-barcode"></i>
+          <span>Barcodes & QR Codes</span>
+        </a>
+
+        <div class="nav-section-title">Transactions</div>
+
+        <a href="{% url 'sales_list' %}" class="nav-item {% if 'sales' in request.path and not 'pos' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-receipt"></i>
+          <span>Sales & Invoices</span>
+        </a>
+
+        <a href="{% url 'purchases_list' %}" class="nav-item {% if 'purchases' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-truck-ramp-box"></i>
+          <span>Purchases</span>
+        </a>
+
+        <a href="{% url 'expenses_list' %}" class="nav-item {% if 'expenses' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-wallet"></i>
+          <span>Expenses</span>
+        </a>
+
+        <div class="nav-section-title">People & Insights</div>
+
+        <a href="{% url 'customer_list' %}" class="nav-item {% if 'customers' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-users"></i>
+          <span>Customers</span>
+        </a>
+
+        <a href="{% url 'supplier_list' %}" class="nav-item {% if 'suppliers' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-handshake"></i>
+          <span>Suppliers</span>
+        </a>
+
+        <a href="{% url 'reports_dashboard' %}" class="nav-item {% if 'reports' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Reports & Analytics</span>
+        </a>
+
+        <div class="nav-section-title">Help & Support</div>
+
+        <a href="{% url 'support_ticket_list' %}" class="nav-item {% if 'support' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-life-ring"></i>
+          <span>Support Tickets</span>
+        </a>
+
+        {% if user.is_admin %}
+        <div class="nav-section-title">Administration</div>
+        <a href="{% url 'users_list' %}" class="nav-item {% if 'users' in request.path %}active{% endif %}">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Users & Staff</span>
+        </a>
+        {% endif %}
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-badge">
+          <div class="user-avatar">
+            {{ user.username|first|upper }}
+          </div>
+          <div class="user-info">
+            <span class="user-name">{{ user.get_full_name|default:user.username }}</span>
+            <span class="user-role">{{ user.get_role_display }}</span>
+            {% if user.trial_ends_at %}
+            <span style="font-size: 0.68rem; color: #10b981; font-weight: 700; display: block; margin-top: 2px;">
+              <i class="fa-solid fa-clock"></i> {{ user.days_left_trial }}d Free Trial
+            </span>
+            {% endif %}
+          </div>
+        </div>
+        <a href="{% url 'logout' %}" class="logout-btn" title="Logout">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="app-main">
+      <header class="app-navbar">
+        <div class="navbar-page-title">
+          <h1>{% block header_title %}Kelra{% endblock %}</h1>
+        </div>
+        <div class="navbar-actions">
+          {% if user.trial_ends_at %}
+          <div style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; padding: 6px 14px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; gap: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.04);">
+            <i class="fa-solid fa-gift" style="color: #059669;"></i>
+            <span>14-Day Free Access • <strong>{{ user.days_left_trial }} Days Remaining</strong></span>
+          </div>
+          {% endif %}
+          {% block header_actions %}
+          <a href="{% url 'pos_terminal' %}" class="btn-pos-quick">
+            <i class="fa-solid fa-cash-register"></i>
+            <span>Open POS Terminal</span>
+          </a>
+          {% endblock %}
+        </div>
+      </header>
+
+      <main class="page-content">
+        <!-- Notification messages -->
+        {% if messages %}
+        <div class="messages-container">
+          {% for message in messages %}
+          <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+            <i class="fa-solid {% if message.tags == 'error' %}fa-triangle-exclamation{% elif message.tags == 'success' %}fa-circle-check{% else %}fa-circle-info{% endif %}"></i>
+            <span>{{ message }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <!-- Global Modals Container -->
+  {% block modals %}{% endblock %}
+
+  <!-- Core Scripts -->
+  <script src="{% static 'js/app.js' %}?v=20260927-2"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

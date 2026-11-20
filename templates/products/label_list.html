@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Product Labels{% endblock %}
+{% block header_title %}Print Product Labels{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fa-solid fa-tag" style="color: var(--primary);"></i>
+      <span>Print Product Labels</span>
+    </div>
+  </div>
+  <div class="card-body">
+    <form method="GET" class="search-form" style="margin-bottom: 20px; display: flex; gap: 10px;">
+      <input type="text" name="q" class="form-control" placeholder="Search product by name, SKU or barcode..." value="{{ query }}" style="max-width: 400px;">
+      <button type="submit" class="btn btn-primary">Search</button>
+      {% if query %}
+      <a href="{% url 'label_list' %}" class="btn btn-secondary">Clear</a>
+      {% endif %}
+    </form>
+    
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>SKU</th>
+            <th>Barcode</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+          <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.sku }}</td>
+            <td>{{ product.barcode|default:"-" }}</td>
+            <td>
+              <a href="{% url 'print_label' product.id %}" target="_blank" class="btn btn-primary btn-sm">
+                <i class="fa-solid fa-tag"></i> Print Label
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="4" style="text-align: center; padding: 20px; color: #666;">No products found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

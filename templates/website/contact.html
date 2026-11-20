@@ -1,0 +1,179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Kelra</title>
+  <meta name="description" content="Talk to the Kelra team about a product demo, store setup, pricing, or support." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/public-pages.css' %}">
+  <style>
+    :root {
+      --ink: #171923;
+      --muted: #626879;
+      --line: #e4e5eb;
+      --paper: #f7f7f9;
+      --purple: #7146e8;
+      --purple-dark: #5832c4;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: #fff; font-family: 'DM Sans', sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1200px, calc(100% - 48px)); margin: 0 auto; }
+    .topbar { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.96); border-bottom: 1px solid var(--line); backdrop-filter: blur(14px); }
+    .nav { min-height: 78px; display: flex; align-items: center; justify-content: space-between; gap: 28px; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; flex: 0 0 auto; font: 700 1.45rem 'Outfit', sans-serif; }
+    .brand-mark { width: 38px; height: 34px; display: block; }
+    .brand-mark svg { display: block; width: 100%; height: 100%; }
+    .nav-links, .nav-actions { display: flex; align-items: center; gap: 25px; }
+    .nav-links { color: #555b69; font-size: .91rem; font-weight: 600; }
+    .nav-links a:hover { color: var(--purple); }
+    .nav-actions { gap: 10px; }
+    .button { min-height: 42px; display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 0 16px; border: 1px solid var(--line); border-radius: 7px; font-size: .9rem; font-weight: 700; transition: background .2s, color .2s, border-color .2s; }
+    .button-light { background: #fff; }
+    .button-light:hover { border-color: var(--purple); color: var(--purple); }
+    .button-primary { color: #fff; background: var(--purple); border-color: var(--purple); }
+    .button-primary:hover { background: var(--purple-dark); border-color: var(--purple-dark); }
+    .hero { overflow: hidden; color: #fff; background: #171923; }
+    .hero-inner { min-height: 440px; display: grid; grid-template-columns: 1fr .88fr; align-items: center; gap: 64px; padding-top: 62px; padding-bottom: 62px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; margin-bottom: 22px; color: #c5b5ff; font-size: .79rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .eyebrow::before { width: 22px; height: 2px; content: ''; background: #9b7aff; }
+    .hero h1 { max-width: 620px; margin: 0; font: 600 clamp(2.7rem, 5vw, 4.4rem)/1.04 'Outfit', sans-serif; }
+    .hero-copy { max-width: 480px; margin: 20px 0 28px; color: #c4c5cf; font-size: 1.04rem; line-height: 1.75; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; }
+    .hero .button-light { color: #fff; border-color: #53545e; background: transparent; }
+    .hero .button-light:hover { border-color: #fff; }
+    .hero-media { min-height: 300px; position: relative; }
+    .hero-media::after { position: absolute; z-index: 0; inset: 18px -18px -18px 18px; border: 1px solid #8d70e8; content: ''; }
+    .hero-media img { position: relative; z-index: 1; display: block; width: 100%; height: 330px; object-fit: cover; }
+    .contact-section { padding: 76px 0 86px; background: var(--paper); }
+    .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 38px; }
+    .section-heading h2 { margin: 0; font: 600 2.1rem 'Outfit', sans-serif; }
+    .section-heading p { max-width: 430px; margin: 0; color: var(--muted); line-height: 1.7; }
+    .contact-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #dcdde4; border-bottom: 1px solid #dcdde4; }
+    .contact-item { min-height: 190px; padding: 30px 28px 32px 0; }
+    .contact-item + .contact-item { padding-left: 30px; border-left: 1px solid #dcdde4; }
+    .contact-icon { width: 42px; height: 42px; display: grid; place-items: center; margin-bottom: 22px; color: var(--purple); background: #ece6ff; border-radius: 8px; }
+    .contact-item h3 { margin: 0 0 8px; font: 600 1.13rem 'Outfit', sans-serif; }
+    .contact-item p { margin: 0; color: var(--muted); font-size: .93rem; line-height: 1.65; }
+    .contact-item a { display: inline-block; margin-top: 12px; color: var(--purple-dark); font-size: .95rem; font-weight: 700; overflow-wrap: anywhere; }
+    .contact-item a:hover { text-decoration: underline; text-underline-offset: 3px; }
+    .demo-strip { display: flex; align-items: center; justify-content: space-between; gap: 26px; padding: 35px 0 0; }
+    .demo-strip strong { display: block; margin-bottom: 5px; font: 600 1.2rem 'Outfit', sans-serif; }
+    .demo-strip p { margin: 0; color: var(--muted); line-height: 1.65; }
+    @media (max-width: 900px) {
+      .nav { min-height: auto; flex-wrap: wrap; padding-top: 16px; padding-bottom: 16px; }
+      .nav-links { order: 3; width: 100%; justify-content: center; flex-wrap: wrap; gap: 12px 22px; }
+      .hero-inner { grid-template-columns: 1fr .8fr; gap: 32px; }
+      .hero-media img { height: 290px; }
+    }
+    @media (max-width: 640px) {
+      .container { width: min(100% - 36px, 520px); }
+      .nav { gap: 12px; }
+      .nav-actions { gap: 7px; }
+      .nav-actions .button { min-height: 38px; padding: 0 11px; font-size: .82rem; }
+      .nav-links { justify-content: flex-start; gap: 10px 18px; font-size: .85rem; }
+      .hero-inner { grid-template-columns: 1fr; gap: 34px; padding-top: 52px; padding-bottom: 52px; }
+      .hero h1 { font-size: 3rem; }
+      .hero-media { min-height: 220px; margin-right: 12px; }
+      .hero-media img { height: 230px; }
+      .contact-section { padding: 54px 0 62px; }
+      .section-heading { display: block; margin-bottom: 24px; }
+      .section-heading h2 { margin-bottom: 10px; font-size: 1.8rem; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .contact-item, .contact-item + .contact-item { min-height: 0; padding: 24px 0; border-left: 0; }
+      .contact-item + .contact-item { border-top: 1px solid #dcdde4; }
+      .contact-icon { margin-bottom: 14px; }
+      .demo-strip { align-items: flex-start; flex-direction: column; padding-top: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <a href="{% url 'home' %}" class="brand" aria-label="Kelra home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 180 150" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="contactKelraMark" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient></defs>
+            <path d="M18 16 L80 16 L108 50 L120 16 L165 16 L119 77 L165 134 L120 134 L106 102 L77 134 L18 134 L62 79 L18 16 Z" fill="url(#contactKelraMark)"/>
+            <path d="M70 26 L128 26 L95 73 L74 56 Z" fill="rgba(255,255,255,0.18)"/>
+          </svg>
+        </span>
+        <span>kelra</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'home' %}#features">Features</a>
+        <a href="{% url 'pos_showcase_page' %}">POS Showcase</a>
+        <a href="{% url 'pricing_page' %}">Pricing</a>
+        <a href="{% url 'about_page' %}">About</a>
+        <a href="{% url 'contact_page' %}" aria-current="page">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <a class="button button-light" href="{% url 'login' %}">Sign In</a>
+        <a class="button button-primary" href="{% url 'register' %}">Free Trial</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-inner">
+        <div>
+          <span class="eyebrow">Contact Kelra</span>
+          <h1>Let’s make your next sale simpler.</h1>
+          <p class="hero-copy">Talk with our team about a live demo, getting your store set up, or choosing the right plan for your business.</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="mailto:hello@kelra.com?subject=Kelra%20product%20demo"><i class="fa-regular fa-calendar-check" aria-hidden="true"></i> Book a demo</a>
+            <a class="button button-light" href="mailto:hello@kelra.com"><i class="fa-regular fa-envelope" aria-hidden="true"></i> Email our team</a>
+          </div>
+        </div>
+        <div class="hero-media">
+          <img src="{% static 'images/hero_pos_tablet.jpg' %}" alt="Kelra point-of-sale interface on a tablet">
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section">
+      <div class="container">
+        <div class="section-heading">
+          <h2>Reach the right people.</h2>
+          <p>Whether you’re exploring Kelra or already running your store with us, we’ll help you find the next step.</p>
+        </div>
+        <div class="contact-grid">
+          <article class="contact-item">
+            <span class="contact-icon"><i class="fa-regular fa-envelope" aria-hidden="true"></i></span>
+            <h3>Sales & demos</h3>
+            <p>See how Kelra can fit your checkout and inventory workflow.</p>
+            <a href="mailto:hello@kelra.com">hello@kelra.com</a>
+          </article>
+          <article class="contact-item">
+            <span class="contact-icon"><i class="fa-solid fa-headset" aria-hidden="true"></i></span>
+            <h3>Phone support</h3>
+            <p>Call us Monday to Saturday, 9:00 AM–6:30 PM.</p>
+            <a href="tel:+9779800000000">+977 9800000000</a>
+          </article>
+          <article class="contact-item">
+            <span class="contact-icon"><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+            <h3>Based in Kathmandu</h3>
+            <p>Supporting retailers and growing businesses across Nepal.</p>
+          </article>
+        </div>
+        <div class="demo-strip">
+          <div>
+            <strong>Ready to take a closer look?</strong>
+            <p>Start your free trial and explore Kelra at your own pace.</p>
+          </div>
+          <a class="button button-primary" href="{% url 'register' %}">Start a free trial <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  {% include 'website/_public_footer.html' %}
+</body>
+</html>

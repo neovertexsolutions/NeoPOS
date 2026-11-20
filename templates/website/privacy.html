@@ -1,0 +1,743 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Kelra</title>
+  <meta name="description" content="Privacy Policy for Kelra. Learn how your store, transaction, and customer data is protected and kept private.">
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --primary-glow: rgba(79, 70, 229, 0.25);
+      
+      --secondary: #0284c7;
+      --secondary-light: #e0f2fe;
+      
+      --accent: #10b981;
+      --accent-light: #d1fae5;
+      --accent-glow: rgba(16, 185, 129, 0.2);
+
+      --bg-body: #ffffff;
+      --bg-surface: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+
+      --text-dark: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 6px 20px -4px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
+
+      --transition-smooth: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-body);
+      line-height: 1.65;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* Frosted Glass Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 1000;
+      padding: 16px 40px;
+    }
+
+    .header-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .brand-icon-box {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    .nav-links-desktop {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color var(--transition-smooth);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary);
+    }
+
+    .btn-glow-primary {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: #ffffff;
+      padding: 9px 20px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px var(--primary-glow);
+      transition: all var(--transition-smooth);
+    }
+
+    .btn-glow-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    /* Page Hero */
+    .page-hero {
+      background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 56px 24px 44px;
+      text-align: center;
+    }
+
+    .hero-container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .breadcrumb-nav a:hover {
+      color: var(--primary);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+
+    .page-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      margin-bottom: 12px;
+    }
+
+    .page-subtitle {
+      font-size: 1.08rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 20px;
+    }
+
+    .meta-pills {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .meta-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Main Content Layout */
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 48px auto 80px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    /* Sticky Sidebar Navigation */
+    .toc-sidebar {
+      position: sticky;
+      top: 96px;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .toc-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toc-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .toc-link {
+      display: block;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-smooth);
+    }
+
+    .toc-link:hover, .toc-link.active {
+      color: var(--primary);
+      background: var(--primary-light);
+      font-weight: 600;
+      transform: translateX(4px);
+    }
+
+    /* Content Area */
+    .legal-content {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 44px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .legal-section {
+      margin-bottom: 40px;
+      scroll-margin-top: 110px;
+    }
+
+    .legal-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title i {
+      color: var(--primary);
+      font-size: 1.25rem;
+    }
+
+    .legal-content p {
+      margin-bottom: 16px;
+      color: var(--text-body);
+      font-size: 0.96rem;
+    }
+
+    .legal-content ul {
+      margin: 12px 0 20px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .legal-content li strong {
+      color: var(--text-dark);
+    }
+
+    /* Highlight Callout Box */
+    .callout-box {
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .callout-box.info {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+    }
+
+    .callout-box.success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+    }
+
+    .callout-box i {
+      font-size: 1.25rem;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .callout-text {
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    /* Data Categories Grid */
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .data-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .data-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .data-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    /* Footer */
+    .site-footer-white {
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      padding: 60px 40px 30px;
+    }
+
+    .footer-top-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 40px;
+    }
+
+    .footer-col-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 18px;
+    }
+
+    .footer-links-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links-list a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      transition: color var(--transition-smooth);
+    }
+
+    .footer-links-list a:hover {
+      color: var(--primary);
+    }
+
+    .footer-bottom-bar {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-bottom-links a:hover {
+      color: var(--primary);
+    }
+
+    @media (max-width: 900px) {
+      .content-wrapper {
+        grid-template-columns: 1fr;
+      }
+      .toc-sidebar {
+        display: none;
+      }
+      .legal-content {
+        padding: 28px 20px;
+      }
+      .data-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-top-grid {
+        grid-template-columns: 1fr;
+      }
+      .site-header {
+        padding: 14px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="{% url 'home' %}" class="brand-logo">
+        <div class="brand-icon-box">
+          <i class="fa-solid fa-cash-register"></i>
+        </div>
+        <span>Kelra</span>
+      </a>
+
+      <nav class="nav-links-desktop">
+        <a href="{% url 'home' %}" class="nav-link">Home</a>
+        <a href="{% url 'privacy_policy' %}" class="nav-link active">Privacy Policy</a>
+        <a href="{% url 'terms_of_service' %}" class="nav-link">Terms of Service</a>
+        <a href="{% url 'security' %}" class="nav-link">Security</a>
+        <a href="{% url 'hardware_support' %}" class="nav-link">Hardware Support</a>
+      </nav>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="{% url 'login' %}" style="font-size: 0.92rem; font-weight: 600; color: var(--text-dark); padding: 8px 16px;">Sign In</a>
+        <a href="{% url 'register' %}" class="btn-glow-primary">
+          <i class="fa-solid fa-rocket"></i> Get Started
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="hero-container">
+      <div class="breadcrumb-nav">
+        <a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Home</a>
+        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+        <span>Legal</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+        <span style="color: var(--text-dark); font-weight: 600;">Privacy Policy</span>
+      </div>
+      <br>
+      <div class="hero-badge">
+        <i class="fa-solid fa-shield-halved"></i> Data Protection & Privacy
+      </div>
+      <h1 class="page-title">Privacy Policy</h1>
+      <p class="page-subtitle">
+        Your business data, transaction records, and customer relationships belong strictly to you. Learn how Kelra safeguards your retail data.
+      </p>
+      <div class="meta-pills">
+        <div class="meta-pill"><i class="fa-regular fa-calendar-check"></i> Last Updated: September 2026</div>
+        <div class="meta-pill"><i class="fa-solid fa-building-store"></i> Scope: Retail Stores, Supermarkets, POS Terminals</div>
+        <div class="meta-pill"><i class="fa-solid fa-lock"></i> Zero Third-Party Monetization</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Content Layout -->
+  <div class="content-wrapper">
+    <!-- Sticky TOC -->
+    <aside class="toc-sidebar">
+      <div class="toc-title">
+        <i class="fa-solid fa-list-ul"></i> Table of Contents
+      </div>
+      <ul class="toc-list">
+        <li><a href="#intro" class="toc-link active">1. Overview & Commitment</a></li>
+        <li><a href="#data-collection" class="toc-link">2. Data We Collect</a></li>
+        <li><a href="#data-usage" class="toc-link">3. How Your Data is Used</a></li>
+        <li><a href="#ownership" class="toc-link">4. Store Data Ownership</a></li>
+        <li><a href="#storage-security" class="toc-link">5. Storage & Database Security</a></li>
+        <li><a href="#staff-roles" class="toc-link">6. Staff & Customer Privacy</a></li>
+        <li><a href="#export-delete" class="toc-link">7. Data Export & Deletion</a></li>
+        <li><a href="#contact" class="toc-link">8. Contact & Compliance</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="legal-content">
+      <section id="intro" class="legal-section">
+        <h2 class="section-title"><i class="fa-solid fa-circle-info"></i> 1. Overview & Commitment</h2>
+        <p>
+          At <strong>Kelra</strong> ("we", "our", or "the System"), we respect the confidentiality of retail merchants, cashiers, store owners, and their end customers. This Privacy Policy details the principles governing how information is collected, processed, and maintained within our Point of Sale software, inventory modules, sales ledger, and customer management system.
+        </p>
+        <div class="callout-box success">
+          <i class="fa-solid fa-check-double"></i>
+          <div class="callout-text">
+            <strong>Key Guarantee:</strong> We do not sell, rent, or trade your sales figures, product margins, inventory records, or customer contact books to third-party advertisers or external data brokers.
+          </div>
+        </div>
+      </section>
+
+      <section id="data-collection" class="legal-section">
+        <h2 class="section-title"><i class="fa-solid fa-database"></i> 2. Data We Collect</h2>
+        <p>
+          To deliver seamless point of sale checkout, inventory control, automated invoice generation, and expense tracking, the system processes the following data categories:
+        </p>
+        <div class="data-grid">
+          <div class="data-card">
+            <div class="data-card-title"><i class="fa-solid fa-user-shield" style="color: var(--primary);"></i> Account Credentials</div>
+            <p>Usernames, email addresses, hashed passwords, and staff role assignments (Admin, Manager, Cashier) to manage access rights.</p>
+          </div>
+          <div class="data-card">
+            <div class="data-card-title"><i class="fa-solid fa-barcode" style="color: var(--secondary);"></i> Catalog & Inventory</div>
+            <p>Product names, barcodes, categories, stock quantities, cost prices, selling prices, minimum alert thresholds, and product images.</p>
+          </div>
+          <div class="data-card">
+            <div class="data-card-title"><i class="fa-solid fa-receipt" style="color: var(--accent);"></i> Sales Transactions</div>
+            <p>Invoice numbers, timestamps, purchased items, quantities, payment methods (Cash, Card, QR), tax/VAT calculations, and cashier attribution.</p>
+          </div>
+          <div class="data-card">
+            <div class="data-card-title"><i class="fa-solid fa-address-book" style="color: #9333ea;"></i> Customer & Supplier Ledgers</div>
+            <p>Customer names, phone numbers, store credit balances, purchase histories, and supplier contact & purchase order details.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="data-usage" class="legal-section">
+        <h2 class="section-title"><i class="fa-solid fa-sliders"></i> 3. How Your Data is Used</h2>
+        <p>Your store's operational data is utilized solely for:</p>
+        <ul>
+          <li><strong>Processing Point-of-Sale Transactions:</strong> Calculating cart totals, applying discounts, updating live inventory counts, and printing thermal receipts.</li>
+          <li><strong>Financial & Profit Reporting:</strong> Generating daily sales charts, cost of goods sold (COGS), gross margins, and expense breakdowns for business owners.</li>
+          <li><strong>Automated Stock Alerts:</strong> Alerting managers when critical items fall below minimum thresholds to prevent retail stockouts.</li>
+          <li><strong>Customer Ledger Accounting:</strong> Keeping accurate track of customer store credits, receivables, and purchase frequency.</li>
+        </ul>
+      </section>
+
+      <section id="ownership" class="legal-section">
+        <h2 class="section-title"><i class="fa-solid fa-gem"></i> 4. Store Data Ownership</h2>
+        <p>
+          <strong>You retain 100% full ownership</strong> of all business data created in your Kelra instance. We claim no intellectual property or proprietary interest in your catalog, sales figures, customer rosters, or pricing configurations.
+        </p>
+        <p>
+          You are free to export your complete database or individual tables (CSV, Excel) whenever required for tax filings, auditing, or migration purposes.
+        </p>
+      </section>
+
+      <section id="storage-security" class="legal-section">
+        <h2 class="section-title"><i class="fa-solid fa-lock"></i> 5. Storage & Database Security</h2>
+        <p>
+          Kelra utilizes an ACID-compliant local SQLite or MySQL relational database designed for resilient retail operations:
+        </p>
+        <ul>
+          <li><strong>Password Hashing:</strong> User passwords are never saved in cleartext. They are hashed using industry-standard PBKDF2 with SHA-256 and unique salt strings.</li>
+          <li><strong>Session Isolation:</strong> HTTP cookies and session tokens prevent session fixation and unauthorized access across staff terminals.</li>
+          <li><strong>Offline Resilience:</strong> In local desktop/server deployments, transactions commit directly to your local hardware storage, ensuring business continuity during internet downtime.</li>
+        </ul>
+      </section>
+
+      <section id="staff-roles" class="legal-section">
+        <h2 class="section-title"><i class="fa-solid fa-users-gear"></i> 6. Staff & Customer Privacy</h2>
+        <p>
+          Store administrators maintain full control over role permissions. Cashiers are restricted to POS Terminal checkout and cannot view confidential net profit margins, wholesale purchase costs, or supplier contacts.
+        </p>
+        <p>
+          Customer records (such as phone numbers collected for digital receipts or loyalty credit) can be edited or anonymized directly by the store administrator upon customer request.
+        </p>
+      </section>
+
+      <section id="export-delete" class="legal-section">
+        <h2 class="section-title"><i class="fa-solid fa-file-export"></i> 7. Data Export & Deletion</h2>
+        <p>
+          You have the right to request a complete archive or deletion of your store database. To backup your system manually at any time:
+        </p>
+        <div class="callout-box info">
+          <i class="fa-solid fa-terminal"></i>
+          <div class="callout-text">
+            <strong>Local Backup Command:</strong> You can create an instant snapshot of your database file <code>db.sqlite3</code> or run <code>python manage.py dumpdata > backup.json</code> anytime.
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" class="legal-section">
+        <h2 class="section-title"><i class="fa-solid fa-envelope-open-text"></i> 8. Contact & Compliance</h2>
+        <p>
+          If you have questions about this Privacy Policy, your store data, or security practices, contact our support team:
+        </p>
+        <p style="font-weight: 600; color: var(--text-dark);">
+          <i class="fa-solid fa-envelope" style="color: var(--primary); margin-right: 6px;"></i> privacy@kelra.com<br>
+          <i class="fa-solid fa-location-dot" style="color: var(--accent); margin-right: 6px;"></i> Kelra • Engineering Team
+        </p>
+      </section>
+    </main>
+  </div>
+
+  {% include 'website/_public_footer.html' %}
+  <!-- Footer -->
+  <footer class="legacy-site-footer-white">
+    <div class="footer-top-grid">
+      <div>
+        <a href="{% url 'home' %}" class="brand-logo" style="margin-bottom: 14px;">
+          <div class="brand-icon-box" style="width: 34px; height: 34px; font-size: 1rem;">
+            <i class="fa-solid fa-cash-register"></i>
+          </div>
+          <span>Kelra</span>
+        </a>
+        <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; max-width: 320px;">
+          Fast, reliable point of sale software engineered for supermarkets, grocery stores, cafes, and retail shops.
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Core Modules</div>
+        <ul class="footer-links-list">
+          <li><a href="{% url 'login' %}">POS Terminal</a></li>
+          <li><a href="{% url 'login' %}">Inventory Stock</a></li>
+          <li><a href="{% url 'login' %}">Sales Invoices</a></li>
+          <li><a href="{% url 'login' %}">Profit & Reports</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Hardware & Setup</div>
+        <ul class="footer-links-list">
+          <li><a href="{% url 'hardware_support' %}">Hardware Support</a></li>
+          <li><a href="{% url 'hardware_support' %}">Thermal Printers</a></li>
+          <li><a href="{% url 'hardware_support' %}">Barcode Scanners</a></li>
+          <li><a href="{% url 'security' %}">Security Architecture</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Legal & Trust</div>
+        <ul class="footer-links-list">
+          <li><a href="{% url 'privacy_policy' %}" style="color: var(--primary); font-weight: 600;">Privacy Policy</a></li>
+          <li><a href="{% url 'terms_of_service' %}">Terms of Service</a></li>
+          <li><a href="{% url 'security' %}">System Security</a></li>
+          <li><a href="{% url 'contact_page' %}">Contact Support</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <div>
+        &copy; 2026 Kelra System.
+      </div>
+      <div class="footer-bottom-links">
+        <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+        <a href="{% url 'terms_of_service' %}">Terms of Service</a>
+        <a href="{% url 'security' %}">Security</a>
+        <a href="{% url 'hardware_support' %}">Hardware Support</a>
+      </div>
+      <div style="color: var(--primary); font-weight: 600;">
+        Made with <i class="fa-solid fa-heart" style="color: #ef4444;"></i> for Retail Stores
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll and active state for TOC
+    const links = document.querySelectorAll('.toc-link');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      const sections = document.querySelectorAll('.legal-section');
+      sections.forEach(section => {
+        const top = section.offsetTop;
+        if (window.pageYOffset >= top - 150) {
+          current = section.getAttribute('id');
+        }
+      });
+      links.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

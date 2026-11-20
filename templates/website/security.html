@@ -1,0 +1,772 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Security Architecture & Protection - Kelra</title>
+  <meta name="description" content="Explore Kelra security architecture: Role-based access control, cryptographic hashing, audit logs, and database crash protection.">
+  
+  <!-- Modern Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-light: #eef2ff;
+      --primary-glow: rgba(79, 70, 229, 0.25);
+      
+      --secondary: #0284c7;
+      --secondary-light: #e0f2fe;
+      
+      --accent: #10b981;
+      --accent-light: #d1fae5;
+      --accent-glow: rgba(16, 185, 129, 0.2);
+
+      --bg-body: #ffffff;
+      --bg-surface: #f8fafc;
+      --bg-card: #ffffff;
+      --border-color: #e2e8f0;
+      --border-light: #f1f5f9;
+
+      --text-dark: #0f172a;
+      --text-body: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 6px 20px -4px rgba(0, 0, 0, 0.07);
+      --shadow-lg: 0 15px 35px -5px rgba(0, 0, 0, 0.08);
+
+      --transition-smooth: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-body);
+      line-height: 1.65;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* Frosted Glass Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      z-index: 1000;
+      padding: 16px 40px;
+    }
+
+    .header-container {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .brand-icon-box {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    .nav-links-desktop {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color var(--transition-smooth);
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary);
+    }
+
+    .btn-glow-primary {
+      background: linear-gradient(135deg, var(--primary), #6366f1);
+      color: #ffffff;
+      padding: 9px 20px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px var(--primary-glow);
+      transition: all var(--transition-smooth);
+    }
+
+    .btn-glow-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    }
+
+    /* Hero */
+    .page-hero {
+      background: radial-gradient(circle at 50% 10%, rgba(79, 70, 229, 0.08), transparent 70%), linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 60px 24px 48px;
+      text-align: center;
+    }
+
+    .hero-container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .breadcrumb-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      background: #ecfdf5;
+      color: #059669;
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .page-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+
+    .page-subtitle {
+      font-size: 1.12rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 24px;
+    }
+
+    /* Pillars Grid */
+    .security-pillars-grid {
+      max-width: 1200px;
+      margin: -24px auto 40px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .pillar-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      box-shadow: var(--shadow-md);
+      transition: all var(--transition-smooth);
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: #cbd5e1;
+    }
+
+    .pillar-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      margin-bottom: 16px;
+    }
+
+    .pillar-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .pillar-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Main Content */
+    .content-wrapper {
+      max-width: 1200px;
+      margin: 40px auto 80px;
+      padding: 0 24px;
+    }
+
+    .section-heading-center {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+
+    .section-title-sub {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    /* Table */
+    .security-table-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 48px;
+    }
+
+    .security-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .security-table th {
+      background: var(--bg-surface);
+      padding: 16px 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .security-table td {
+      padding: 16px 20px;
+      font-size: 0.92rem;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--text-body);
+    }
+
+    .security-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .badge-admin { background: #fee2e2; color: #b91c1c; }
+    .badge-manager { background: #e0f2fe; color: #0369a1; }
+    .badge-cashier { background: #dcfce7; color: #15803d; }
+
+    /* Checklist Card */
+    .checklist-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 48px;
+    }
+
+    .checklist-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .checklist-items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      user-select: none;
+      transition: all var(--transition-smooth);
+    }
+
+    .check-item:hover {
+      background: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .check-item-text strong {
+      display: block;
+      color: var(--text-dark);
+      font-size: 0.94rem;
+      margin-bottom: 2px;
+    }
+
+    .check-item-text span {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    /* Backup Terminal Snippet Box */
+    .terminal-box {
+      background: #0f172a;
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      color: #e2e8f0;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9rem;
+      position: relative;
+      margin-top: 16px;
+    }
+
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      border-bottom: 1px solid #1e293b;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+
+    .btn-copy {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: #e2e8f0;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-copy:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Footer */
+    .site-footer-white {
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      padding: 60px 40px 30px;
+    }
+
+    .footer-top-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      padding-bottom: 40px;
+    }
+
+    .footer-col-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 18px;
+    }
+
+    .footer-links-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links-list a {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      transition: color var(--transition-smooth);
+    }
+
+    .footer-links-list a:hover {
+      color: var(--primary);
+    }
+
+    .footer-bottom-bar {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-bottom-links a:hover {
+      color: var(--primary);
+    }
+
+    @media (max-width: 900px) {
+      .security-pillars-grid { grid-template-columns: 1fr; margin-top: 24px; }
+      .checklist-items { grid-template-columns: 1fr; }
+      .footer-top-grid { grid-template-columns: 1fr; }
+      .site-header { padding: 14px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="{% url 'home' %}" class="brand-logo">
+        <div class="brand-icon-box">
+          <i class="fa-solid fa-cash-register"></i>
+        </div>
+        <span>Kelra</span>
+      </a>
+
+      <nav class="nav-links-desktop">
+        <a href="{% url 'home' %}" class="nav-link">Home</a>
+        <a href="{% url 'privacy_policy' %}" class="nav-link">Privacy Policy</a>
+        <a href="{% url 'terms_of_service' %}" class="nav-link">Terms of Service</a>
+        <a href="{% url 'security' %}" class="nav-link active">Security</a>
+        <a href="{% url 'hardware_support' %}" class="nav-link">Hardware Support</a>
+      </nav>
+
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <a href="{% url 'login' %}" style="font-size: 0.92rem; font-weight: 600; color: var(--text-dark); padding: 8px 16px;">Sign In</a>
+        <a href="{% url 'register' %}" class="btn-glow-primary">
+          <i class="fa-solid fa-rocket"></i> Get Started
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Page Hero -->
+  <section class="page-hero">
+    <div class="hero-container">
+      <div class="breadcrumb-nav">
+        <a href="{% url 'home' %}"><i class="fa-solid fa-house"></i> Home</a>
+        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+        <span>Trust & Architecture</span>
+        <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+        <span style="color: var(--text-dark); font-weight: 600;">Security</span>
+      </div>
+      <br>
+      <div class="hero-badge">
+        <i class="fa-solid fa-shield-virus"></i> Multi-Tier Defense Architecture
+      </div>
+      <h1 class="page-title">Enterprise Security for Retail POS</h1>
+      <p class="page-subtitle">
+        Protecting your checkout cash drawers, margins, employee permissions, and sales audit trails against tampering and loss.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3 Big Security Pillars -->
+  <div class="security-pillars-grid">
+    <div class="pillar-card">
+      <div class="pillar-icon" style="background: #eef2ff; color: var(--primary);">
+        <i class="fa-solid fa-user-lock"></i>
+      </div>
+      <div class="pillar-title">Granular Staff RBAC</div>
+      <p class="pillar-desc">
+        Strict separation between Admin, Manager, and Cashier accounts prevents cashiers from manipulating sales margins, voiding invoices unnoticed, or viewing wholesale purchase prices.
+      </p>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon" style="background: #d1fae5; color: #059669;">
+        <i class="fa-solid fa-key"></i>
+      </div>
+      <div class="pillar-title">PBKDF2 Cryptographic Salt</div>
+      <p class="pillar-desc">
+        Passwords are irreversibly hashed using PBKDF2 SHA-256 with individual cryptographic salt seeds. Even in database exports, employee passwords cannot be decrypted.
+      </p>
+    </div>
+
+    <div class="pillar-card">
+      <div class="pillar-icon" style="background: #e0f2fe; color: var(--secondary);">
+        <i class="fa-solid fa-hard-drive"></i>
+      </div>
+      <div class="pillar-title">ACID Power-Loss Defense</div>
+      <p class="pillar-desc">
+        All financial invoice creations and inventory subtractions utilize atomic database transactions. If store electricity cuts mid-sale, the database automatically rolls back clean without corruption.
+      </p>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Role & Permissions Matrix -->
+    <div class="section-heading-center">
+      <h2 class="section-title-sub">Staff Role & Permission Boundaries</h2>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Clear operational boundaries prevent cashier shrink, inventory inflation, and unauthorized discounts.
+      </p>
+    </div>
+
+    <div class="security-table-card">
+      <table class="security-table">
+        <thead>
+          <tr>
+            <th>Module / Operation</th>
+            <th><span class="badge-role badge-admin"><i class="fa-solid fa-crown"></i> Admin</span></th>
+            <th><span class="badge-role badge-manager"><i class="fa-solid fa-briefcase"></i> Manager</span></th>
+            <th><span class="badge-role badge-cashier"><i class="fa-solid fa-receipt"></i> Cashier</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>POS Terminal Checkout & Print</strong></td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Full Access</td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Full Access</td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Full Access</td>
+          </tr>
+          <tr>
+            <td><strong>Create Products & Set Selling Prices</strong></td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Allowed</td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Allowed</td>
+            <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i> Restricted</td>
+          </tr>
+          <tr>
+            <td><strong>View Wholesale Purchase Costs & Margins</strong></td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Visible</td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Visible</td>
+            <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i> Hidden</td>
+          </tr>
+          <tr>
+            <td><strong>Supplier Purchase Orders & Restocking</strong></td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Full Access</td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Full Access</td>
+            <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i> Restricted</td>
+          </tr>
+          <tr>
+            <td><strong>Expense Logging & Operating Costs</strong></td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Full Access</td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> View Only</td>
+            <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i> Restricted</td>
+          </tr>
+          <tr>
+            <td><strong>Store Profit Reports & Net Margin Analytics</strong></td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Full Access</td>
+            <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i> Restricted</td>
+            <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i> Restricted</td>
+          </tr>
+          <tr>
+            <td><strong>User Staff Management & Role Assignments</strong></td>
+            <td><i class="fa-solid fa-check" style="color: #10b981;"></i> Full Access</td>
+            <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i> Restricted</td>
+            <td><i class="fa-solid fa-xmark" style="color: #ef4444;"></i> Restricted</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Store Owner Checklist -->
+    <div class="checklist-card">
+      <div class="checklist-title">
+        <i class="fa-solid fa-clipboard-check" style="color: var(--primary);"></i>
+        Retail Store Owner Security Checklist
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.92rem;">
+        Recommended operational best practices for securing your checkout counter and store computers:
+      </p>
+
+      <div class="checklist-items">
+        <label class="check-item">
+          <input type="checkbox" checked>
+          <div class="check-item-text">
+            <strong>Individual Staff Accounts</strong>
+            <span>Create unique logins for each cashier to ensure exact checkout audit accountability.</span>
+          </div>
+        </label>
+
+        <label class="check-item">
+          <input type="checkbox" checked>
+          <div class="check-item-text">
+            <strong>UPS Battery on POS Counter</strong>
+            <span>Plug cash register PC and receipt printer into an uninterruptible power supply.</span>
+          </div>
+        </label>
+
+        <label class="check-item">
+          <input type="checkbox">
+          <div class="check-item-text">
+            <strong>Daily Database Backup Script</strong>
+            <span>Copy <code>db.sqlite3</code> to an external USB drive or offsite folder every evening.</span>
+          </div>
+        </label>
+
+        <label class="check-item">
+          <input type="checkbox">
+          <div class="check-item-text">
+            <strong>Nightly Cash Drawer Balancing</strong>
+            <span>Reconcile total physical cash collected against the Daily Shift Sales Report.</span>
+          </div>
+        </label>
+      </div>
+
+      <!-- Quick Command -->
+      <div style="margin-top: 28px;">
+        <span style="font-size: 0.88rem; font-weight: 700; color: var(--text-dark);">
+          <i class="fa-solid fa-terminal" style="color: var(--primary);"></i> Instant Database Snapshot (One-Click Command):
+        </span>
+        <div class="terminal-box">
+          <div class="terminal-header">
+            <span>PowerShell / Command Prompt</span>
+            <button class="btn-copy" onclick="navigator.clipboard.writeText('Copy-Item db.sqlite3 backup_$(Get-Date -Format yyyyMMdd).sqlite3'); alert('Copied backup command!');">
+              <i class="fa-regular fa-copy"></i> Copy Command
+            </button>
+          </div>
+          <code>Copy-Item db.sqlite3 backup_$(Get-Date -Format yyyyMMdd).sqlite3</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'website/_public_footer.html' %}
+  <!-- Footer -->
+  <footer class="legacy-site-footer-white">
+    <div class="footer-top-grid">
+      <div>
+        <a href="{% url 'home' %}" class="brand-logo" style="margin-bottom: 14px;">
+          <div class="brand-icon-box" style="width: 34px; height: 34px; font-size: 1rem;">
+            <i class="fa-solid fa-cash-register"></i>
+          </div>
+          <span>Kelra</span>
+        </a>
+        <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; max-width: 320px;">
+          Fast, reliable point of sale software engineered for supermarkets, grocery stores, cafes, and retail shops.
+        </p>
+      </div>
+      <div>
+        <div class="footer-col-title">Core Modules</div>
+        <ul class="footer-links-list">
+          <li><a href="{% url 'login' %}">POS Terminal</a></li>
+          <li><a href="{% url 'login' %}">Inventory Stock</a></li>
+          <li><a href="{% url 'login' %}">Sales Invoices</a></li>
+          <li><a href="{% url 'login' %}">Profit & Reports</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Hardware & Setup</div>
+        <ul class="footer-links-list">
+          <li><a href="{% url 'hardware_support' %}">Hardware Support</a></li>
+          <li><a href="{% url 'hardware_support' %}">Thermal Printers</a></li>
+          <li><a href="{% url 'hardware_support' %}">Barcode Scanners</a></li>
+          <li><a href="{% url 'security' %}" style="color: var(--primary); font-weight: 600;">Security Architecture</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Legal & Trust</div>
+        <ul class="footer-links-list">
+          <li><a href="{% url 'privacy_policy' %}">Privacy Policy</a></li>
+          <li><a href="{% url 'terms_of_service' %}">Terms of Service</a></li>
+          <li><a href="{% url 'security' %}">System Security</a></li>
+          <li><a href="{% url 'contact_page' %}">Contact Support</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom-bar">
+      <div>
+        &copy; 2026 Kelra System.
+      </div>
+      <div class="footer-bottom-links">
+        <a href="{% url 'privacy_policy' %}">Privacy Policy</a>
+        <a href="{% url 'terms_of_service' %}">Terms of Service</a>
+        <a href="{% url 'security' %}">Security</a>
+        <a href="{% url 'hardware_support' %}">Hardware Support</a>
+      </div>
+      <div style="color: var(--primary); font-weight: 600;">
+        Made with <i class="fa-solid fa-heart" style="color: #ef4444;"></i> for Retail Stores
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

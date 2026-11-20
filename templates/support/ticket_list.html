@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header_title %}Support Tickets{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fa-solid fa-life-ring" style="color: var(--primary);"></i>
+      <span>My Support Tickets</span>
+    </div>
+    <a href="{% url 'support_ticket_create' %}" class="btn btn-primary btn-sm" style="display: flex; align-items: center; gap: 8px;">
+      <i class="fa-solid fa-plus"></i> <span>Raise Ticket</span>
+    </a>
+  </div>
+  
+  <div class="table-responsive">
+    <table class="data-table">
+      <colgroup>
+        <col style="width: 15%;">
+        <col style="width: 25%;">
+        <col style="width: 15%;">
+        <col style="width: 10%;">
+        <col style="width: 10%;">
+        <col style="width: 15%;">
+        <col style="width: 10%;">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Ticket No.</th>
+          <th>Subject</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Last Updated</th>
+          <th style="text-align: right;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ticket in tickets %}
+        <tr>
+          <td>
+            <strong style="color: var(--primary);">{{ ticket.ticket_number }}</strong>
+          </td>
+          <td style="font-weight: 600; color: var(--text-dark);">
+            {{ ticket.subject }}
+          </td>
+          <td>{{ ticket.category }}</td>
+          <td>
+            <span class="badge badge-{% if ticket.priority == 'High' %}danger{% elif ticket.priority == 'Medium' %}warning{% else %}info{% endif %}">
+              {{ ticket.priority }}
+            </span>
+          </td>
+          <td>
+            <span class="badge badge-{% if ticket.status == 'Open' %}primary{% elif ticket.status == 'Pending' %}warning{% elif ticket.status == 'Resolved' %}success{% else %}secondary{% endif %}">
+              {{ ticket.status }}
+            </span>
+          </td>
+          <td style="color: var(--text-light); font-size: 0.85rem;">
+            {{ ticket.updated_at|date:"M d, Y H:i" }}
+          </td>
+          <td style="text-align: right;">
+            <a href="{% url 'support_ticket_detail' ticket.id %}" class="btn btn-secondary btn-sm">
+              View
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" style="text-align: center; color: var(--text-light); padding: 40px;">
+            <i class="fa-solid fa-envelope-open-text" style="font-size: 2.5rem; margin-bottom: 12px; display: block; opacity: 0.5;"></i>
+            No support tickets yet. Need help? Raise a new support ticket!
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header_title %}Store Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=20260927-4">
+{% endblock %}
+
+{% block content %}
+<div class="plan-banner">
+  <div class="plan-banner-icon" aria-hidden="true"><i class="fa-solid fa-crown"></i></div>
+  <div class="plan-banner-copy">
+    <span class="plan-banner-label">
+      {% if latest_upgrade_request and latest_upgrade_request.status == 'pending' %}
+        Upgrade request pending
+      {% elif latest_upgrade_request and latest_upgrade_request.status == 'rejected' %}
+        Payment update needed
+      {% else %}
+        Your current plan
+      {% endif %}
+    </span>
+    <h2 class="plan-banner-title">{{ user.get_plan_display }}</h2>
+    <p class="plan-banner-message">
+      {% if latest_upgrade_request and latest_upgrade_request.status == 'pending' %}
+        Payment proof is waiting for admin approval.
+      {% elif latest_upgrade_request and latest_upgrade_request.status == 'rejected' %}
+        Your last payment request was rejected. You can submit a new proof.
+      {% else %}
+        Upgrade your plan to unlock the full Kelra feature set.
+      {% endif %}
+    </p>
+  </div>
+  <a href="{% url 'upgrade_request' %}" class="btn btn-primary plan-banner-action">
+    <i class="fa-solid fa-arrow-up-right-dots" aria-hidden="true"></i><span>Upgrade Plan</span>
+  </a>
+</div>
+
+<!-- Top Metrics Row -->
+<div class="metrics-grid">
+  <!-- Today's Sales -->
+  <div class="metric-card metric-card-sales">
+    <div class="metric-icon-box sales">
+      <i class="fa-solid fa-coins"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">Today's Sales</span>
+      <span class="metric-value">Rs. {{ today_sales_total|floatformat:2 }}</span>
+      <span class="metric-sub">{{ today_orders_count }} orders completed today</span>
+    </div>
+  </div>
+
+  <!-- Total Orders -->
+  <div class="metric-card">
+    <div class="metric-icon-box orders">
+      <i class="fa-solid fa-bag-shopping"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">Today's Orders</span>
+      <span class="metric-value">{{ today_orders_count }}</span>
+      <span class="metric-sub">Transactions processed</span>
+    </div>
+  </div>
+
+  <!-- Total Products -->
+  <div class="metric-card">
+    <div class="metric-icon-box products">
+      <i class="fa-solid fa-boxes-stacked"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">Total Products</span>
+      <span class="metric-value">{{ total_products_count }}</span>
+      <span class="metric-sub">Active items in catalog</span>
+    </div>
+  </div>
+
+  <!-- Total Customers -->
+  <div class="metric-card">
+    <div class="metric-icon-box customers">
+      <i class="fa-solid fa-user-group"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">Total Customers</span>
+      <span class="metric-value">{{ total_customers_count }}</span>
+      <span class="metric-sub">Registered buyers</span>
+    </div>
+  </div>
+
+  <!-- Low Stock Alert -->
+  <div class="metric-card">
+    <div class="metric-icon-box lowstock">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <div class="metric-content">
+      <span class="metric-label">Low Stock</span>
+      <span class="metric-value" style="color: #dc2626;">{{ low_stock_count }}</span>
+      <span class="metric-sub">Items need restocking</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- Sales Chart Section -->
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fa-solid fa-chart-area" style="color: var(--primary);"></i>
+      <span>Weekly Sales & Orders Trend</span>
+    </div>
+    <a href="{% url 'reports_dashboard' %}" class="btn btn-secondary btn-sm">
+      <i class="fa-solid fa-arrow-up-right-from-square"></i> Full Reports
+    </a>
+  </div>
+  <div class="card-body">
+    <div class="chart-container">
+      <canvas id="salesTrendChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Sales & Low Stock Tables -->
+<div class="dashboard-tables-grid">
+  <!-- Recent Sales -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-clock-rotate-left" style="color: #0284c7;"></i>
+        <span>Recent Sales</span>
+      </div>
+      <a href="{% url 'sales_list' %}" class="btn btn-secondary btn-sm">View All</a>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table recent-sales-table">
+        <colgroup>
+          <col style="width: 28%;">
+          <col style="width: 24%;">
+          <col style="width: 18%;">
+          <col style="width: 17%;">
+          <col style="width: 13%;">
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Invoice</th>
+            <th>Customer</th>
+            <th>Total</th>
+            <th>Payment</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for sale in recent_sales %}
+          <tr>
+            <td>
+              <strong style="color: var(--primary);">#{{ sale.invoice_number }}</strong>
+              <div style="font-size: 0.75rem; color: var(--text-light);">{{ sale.created_at|date:"M d, H:i" }}</div>
+            </td>
+            <td>{{ sale.customer.name|default:"Walk-in Customer" }}</td>
+            <td class="sale-total"><strong>Rs. {{ sale.total|floatformat:2 }}</strong></td>
+            <td>
+              <span class="badge badge-{% if sale.payment_method == 'cash' %}success{% elif sale.payment_method == 'card' %}info{% else %}warning{% endif %}">
+                {{ sale.get_payment_method_display }}
+              </span>
+            </td>
+            <td>
+              <a href="{% url 'invoice_detail' sale.id %}" class="btn btn-secondary btn-sm" title="View Invoice">
+                <i class="fa-solid fa-receipt"></i>
+              </a>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-light); padding: 24px;">
+              No sales recorded yet. Click "Open POS Terminal" to make your first sale!
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Low Stock Alert -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        <i class="fa-solid fa-triangle-exclamation" style="color: #dc2626;"></i>
+        <span>Low Stock Alert</span>
+      </div>
+      <a href="{% url 'inventory_list' %}?filter=low" class="btn btn-secondary btn-sm">Manage Stock</a>
+    </div>
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            <th>Current Stock</th>
+            <th>Min Required</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for product in low_stock_products %}
+          <tr>
+            <td>
+              <strong>{{ product.name }}</strong>
+              <div style="font-size: 0.75rem; color: var(--text-light);">{{ product.sku }}</div>
+            </td>
+            <td>{{ product.category.name|default:"None" }}</td>
+            <td>
+              <span class="stock-warning-badge">{{ product.stock }} units</span>
+            </td>
+            <td>{{ product.minimum_stock }} units</td>
+            <td>
+              {% if product.stock <= 0 %}
+              <span class="badge badge-danger">Out of Stock</span>
+              {% else %}
+              <span class="badge badge-warning">Low Stock</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--text-light); padding: 24px;">
+              <i class="fa-solid fa-circle-check" style="color: var(--success); font-size: 1.5rem; margin-bottom: 8px; display: block;"></i>
+              All items are sufficiently stocked!
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const labels = {{ chart_labels|safe }};
+    const salesData = {{ chart_sales|safe }};
+    const ordersData = {{ chart_orders|safe }};
+    initSalesChart(labels, salesData, ordersData);
+
+
+  });
+</script>
+{% endblock %}

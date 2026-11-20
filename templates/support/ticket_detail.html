@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header_title %}Ticket {{ ticket.ticket_number }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .ticket-layout {
+    display: flex;
+    gap: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: flex-start;
+  }
+  .ticket-main {
+    flex: 1;
+    min-width: 0;
+  }
+  .ticket-sidebar {
+    width: 300px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 24px;
+  }
+  
+  @media (max-width: 991px) {
+    .ticket-layout {
+      flex-direction: column-reverse;
+    }
+    .ticket-sidebar {
+      width: 100%;
+      position: static;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ticket-layout">
+  
+  <!-- Left Side: Email Thread -->
+  <div class="ticket-main">
+    
+    <!-- Ticket Header Area -->
+    <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+        <div>
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--text-dark); margin: 0 0 8px 0;">{{ ticket.subject }}</h2>
+          <div style="display: flex; gap: 12px; align-items: center; font-size: 0.85rem; color: var(--text-muted);">
+            <span style="background: var(--bg-surface); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color);">
+              <i class="fa-solid fa-tag" style="margin-right: 4px;"></i> {{ ticket.category }}
+            </span>
+            <span><i class="fa-solid fa-clock" style="margin-right: 4px;"></i> {{ ticket.created_at|date:"F d, Y, h:i A" }}</span>
+          </div>
+        </div>
+        <span class="badge badge-{% if ticket.status == 'Open' %}primary{% elif ticket.status == 'Pending' %}warning{% elif ticket.status == 'Resolved' %}success{% else %}secondary{% endif %}" style="font-size: 0.9rem; padding: 8px 14px;">
+          {{ ticket.status }}
+        </span>
+      </div>
+
+      <!-- Original Message (Email Style) -->
+      <div style="display: flex; gap: 16px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+        <div style="width: 42px; height: 42px; background: var(--primary-light); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
+          {{ ticket.user.username|make_list|first|upper }}
+        </div>
+        <div style="flex: 1;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+            <div>
+              <strong style="color: var(--text-dark); display: block;">{{ ticket.user.username }}</strong>
+              <span style="color: var(--text-light); font-size: 0.8rem;">to Support</span>
+            </div>
+          </div>
+          <div style="color: var(--text-body); line-height: 1.6; font-size: 0.95rem; white-space: pre-wrap;">{{ ticket.description }}</div>
+          
+          {% if ticket.attachment %}
+            <div style="margin-top: 16px; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; display: inline-flex; align-items: center; gap: 10px;">
+              <i class="fa-solid fa-file-lines" style="color: var(--text-muted); font-size: 1.2rem;"></i>
+              <a href="{{ ticket.attachment.url }}" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none;">View Attachment</a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Replies Thread (Email Style) -->
+    {% for reply in replies %}
+      <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 20px; box-shadow: var(--shadow-sm);">
+        <div style="display: flex; gap: 16px;">
+          <div style="width: 42px; height: 42px; {% if reply.user.is_superuser %}background: #dcfce7; color: #166534;{% else %}background: var(--primary-light); color: var(--primary);{% endif %} border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; flex-shrink: 0;">
+            {% if reply.user.is_superuser %}
+              <i class="fa-solid fa-headset"></i>
+            {% else %}
+              {{ reply.user.username|make_list|first|upper }}
+            {% endif %}
+          </div>
+          <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <div>
+                <strong style="color: var(--text-dark); display: block;">
+                  {% if reply.user.is_superuser %}Kelra Support Team{% else %}{{ reply.user.username }}{% endif %}
+                </strong>
+                <span style="color: var(--text-light); font-size: 0.8rem;">
+                  {{ reply.created_at|date:"F d, Y, h:i A" }}
+                </span>
+              </div>
+            </div>
+            <div style="color: var(--text-body); line-height: 1.6; font-size: 0.95rem; white-space: pre-wrap;">{{ reply.message }}</div>
+            
+            {% if reply.attachment %}
+              <div style="margin-top: 16px; padding: 12px; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; display: inline-flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-file-lines" style="color: var(--text-muted); font-size: 1.2rem;"></i>
+                <a href="{{ reply.attachment.url }}" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none;">View Attachment</a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div style="text-align: center; color: var(--text-muted); padding: 30px; margin-bottom: 20px;">
+        <i class="fa-regular fa-comments" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
+        <p>No replies yet. Our support team will get back to you shortly.</p>
+      </div>
+    {% endfor %}
+
+    <!-- Reply Box -->
+    {% if ticket.status != 'Closed' %}
+      <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm);">
+        <h4 style="margin: 0 0 16px 0; font-size: 1.1rem; color: var(--text-dark);"><i class="fa-solid fa-reply"></i> Reply to Ticket</h4>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div style="margin-bottom: 16px;">
+            <textarea name="message" class="form-control" rows="4" placeholder="Type your reply here..." style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); outline: none; font-family: inherit; resize: vertical;" required></textarea>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <label for="id_attachment" style="cursor: pointer; display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 0.9rem;">
+                <i class="fa-solid fa-paperclip"></i> Attach File
+              </label>
+              <input type="file" name="attachment" id="id_attachment" style="display: none;">
+            </div>
+            <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px;">
+              <i class="fa-solid fa-paper-plane"></i> Send Reply
+            </button>
+          </div>
+        </form>
+      </div>
+    {% else %}
+      <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; text-align: center; color: var(--text-muted);">
+        <i class="fa-solid fa-lock" style="font-size: 1.5rem; margin-bottom: 10px; opacity: 0.6;"></i>
+        <p style="margin: 0;">This ticket has been closed. You can no longer reply to this conversation.</p>
+      </div>
+    {% endif %}
+
+  </div>
+  
+  <!-- Right Side: Details Pane -->
+  <div class="ticket-sidebar">
+    <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm);">
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin: 0 0 20px 0; color: var(--text-dark); border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">Ticket Details</h3>
+      
+      <div style="margin-bottom: 16px;">
+        <span style="display: block; font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Ticket Number</span>
+        <strong style="color: var(--primary);">{{ ticket.ticket_number }}</strong>
+      </div>
+      
+      <div style="margin-bottom: 16px;">
+        <span style="display: block; font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Priority</span>
+        <span class="badge badge-{% if ticket.priority == 'High' %}danger{% elif ticket.priority == 'Medium' %}warning{% else %}info{% endif %}">{{ ticket.priority }}</span>
+      </div>
+      
+      <div style="margin-bottom: 16px;">
+        <span style="display: block; font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Department</span>
+        <span style="color: var(--text-dark);">{{ ticket.category }}</span>
+      </div>
+      
+      <div style="margin-bottom: 16px;">
+        <span style="display: block; font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Opened On</span>
+        <span style="color: var(--text-dark); font-size: 0.9rem;">{{ ticket.created_at|date:"M d, Y" }}</span>
+      </div>
+      
+      <div>
+        <a href="{% url 'support_ticket_list' %}" style="display: block; text-align: center; padding: 10px; background: var(--bg-surface); color: var(--text-body); border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin-top: 24px; font-weight: 600;">
+          <i class="fa-solid fa-arrow-left"></i> Back to Tickets
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Simple script to show selected file name in reply box
+  document.getElementById('id_attachment').addEventListener('change', function(e) {
+    if(e.target.files.length > 0) {
+      let label = e.target.previousElementSibling;
+      label.innerHTML = '<i class="fa-solid fa-check" style="color: var(--success);"></i> ' + e.target.files[0].name;
+      label.style.color = "var(--text-dark)";
+    }
+  });
+</script>
+{% endblock %}

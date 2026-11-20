@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Purchase Order #{{ purchase.reference_no }}{% endblock %}
+{% block header_title %}Purchase Order Details{% endblock %}
+
+{% block header_actions %}
+<div style="display: flex; gap: 10px;">
+  <button class="btn btn-secondary" onclick="window.print()">
+    <i class="fa-solid fa-print"></i> Print PO
+  </button>
+  <a href="{% url 'purchases_list' %}" class="btn btn-secondary">
+    <i class="fa-solid fa-arrow-left"></i> Back to Purchases
+  </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto; padding: 32px;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 20px; border-bottom: 1px solid var(--border-color); margin-bottom: 24px;">
+    <div>
+      <span class="badge badge-primary" style="margin-bottom: 8px;">PURCHASE ORDER</span>
+      <h2 style="font-family: var(--font-heading); font-size: 1.5rem;">#{{ purchase.reference_no }}</h2>
+      <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+        Date: {{ purchase.created_at|date:"F d, Y - H:i" }}
+      </div>
+    </div>
+    <div style="text-align: right;">
+      <span class="badge badge-{% if purchase.payment_status == 'paid' %}success{% else %}warning{% endif %}" style="font-size: 0.88rem; padding: 4px 12px;">
+        STATUS: {{ purchase.get_payment_status_display|upper }}
+      </span>
+      <div style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted);">
+        Created by: <strong>{{ purchase.created_by.username|default:"Admin" }}</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supplier Info -->
+  <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 24px;">
+    <strong style="color: var(--text-muted); font-size: 0.78rem; text-transform: uppercase;">Supplier Information:</strong>
+    <div style="font-size: 1.1rem; font-weight: 700; margin-top: 4px;">
+      {{ purchase.supplier.name|default:"General Supplier" }}
+    </div>
+    {% if purchase.supplier %}
+    <div style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">
+      Phone: {{ purchase.supplier.phone|default:"-" }} | Email: {{ purchase.supplier.email|default:"-" }}
+    </div>
+    <div style="color: var(--text-muted); font-size: 0.85rem;">Address: {{ purchase.supplier.address|default:"-" }}</div>
+    {% endif %}
+  </div>
+
+  <!-- Items Table -->
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Product Name</th>
+          <th>SKU</th>
+          <th style="text-align: center;">Qty Received</th>
+          <th style="text-align: right;">Unit Cost</th>
+          <th style="text-align: right;">Total Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in purchase.items.all %}
+        <tr>
+          <td><strong>{{ item.product.name }}</strong></td>
+          <td><code>{{ item.product.sku }}</code></td>
+          <td style="text-align: center;">{{ item.quantity }}</td>
+          <td style="text-align: right;">Rs. {{ item.purchase_price|floatformat:2 }}</td>
+          <td style="text-align: right;"><strong>Rs. {{ item.total|floatformat:2 }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+    <div style="width: 260px; display: flex; flex-direction: column; gap: 8px;">
+      <div class="summary-row total-row">
+        <span>Grand Total:</span>
+        <span style="color: var(--primary);">Rs. {{ purchase.total|floatformat:2 }}</span>
+      </div>
+    </div>
+  </div>
+
+  {% if purchase.notes %}
+  <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border-color); font-size: 0.85rem; color: var(--text-muted);">
+    <strong>Order Notes:</strong> {{ purchase.notes }}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

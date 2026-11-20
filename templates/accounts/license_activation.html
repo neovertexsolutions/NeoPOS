@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Software License & Activation - Kelra{% endblock %}
+{% block header_title %}Software License Console{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 20px auto;">
+  <div class="card shadow-sm border-0 mb-4" style="border-radius: 14px; overflow: hidden;">
+    <div style="background: linear-gradient(135deg, #0f172a, #1e293b); padding: 32px 36px; color: white;">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #38bdf8; letter-spacing: 0.08em; margin-bottom: 6px;">
+            <i class="fas fa-shield-alt me-1"></i> Software License Verification
+          </div>
+          <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; margin: 0 0 6px 0;">
+            Kelra v3.15 Enterprise Edition
+          </h2>
+          <p style="color: #94a3b8; font-size: 0.92rem; margin: 0;">
+            Store: <strong style="color: white;">{{ user.store_name|default:"Retail Store" }}</strong> • User: <code>@{{ user.username }}</code>
+          </p>
+        </div>
+        <div style="text-align: right;">
+          {% if not user.trial_ends_at %}
+          <span class="badge" style="background: #10b981; font-size: 13px; padding: 8px 14px; border-radius: 8px;">
+            <i class="fas fa-infinity me-1"></i> Lifetime License
+          </span>
+          {% elif user.days_left_trial > 0 %}
+          <span class="badge" style="background: #0284c7; font-size: 13px; padding: 8px 14px; border-radius: 8px;">
+            <i class="fas fa-check-circle me-1"></i> {{ user.days_left_trial }} Days Remaining
+          </span>
+          {% else %}
+          <span class="badge" style="background: #ef4444; font-size: 13px; padding: 8px 14px; border-radius: 8px;">
+            <i class="fas fa-ban me-1"></i> License Expired / Blocked
+          </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body" style="padding: 32px 36px;">
+      <!-- License Details -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px 20px; margin-bottom: 24px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <span style="font-size: 0.82rem; font-weight: 700; color: #64748b; text-transform: uppercase;">
+            <i class="fas fa-key text-warning me-1"></i> Your Store Hardware License Key
+          </span>
+          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="navigator.clipboard.writeText('{{ user.license_key }}'); alert('Copied license key!');" style="font-size: 11px; padding: 2px 8px;">
+            <i class="fa-regular fa-copy me-1"></i> Copy Key
+          </button>
+        </div>
+        <div style="font-family: 'Courier New', Courier, monospace; font-size: 1.15rem; font-weight: 700; color: #0f172a; word-break: break-all;">
+          {{ user.license_key }}
+        </div>
+        <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 6px;">
+          Status: <strong>{{ user.license_status }}</strong> | Current Tier: <strong style="text-transform: capitalize;">{{ user.plan }}</strong>
+        </div>
+      </div>
+
+      <!-- Activation Form -->
+      <form method="POST">
+        {% csrf_token %}
+        <div class="form-group mb-3">
+          <label class="form-label" for="license_key" style="font-weight: 700; font-size: 0.92rem; color: #1e293b;">
+            Enter Software License Key to Unlock / Renew:
+          </label>
+          <div style="position: relative;">
+            <input type="text" id="license_key" name="license_key" class="form-control" required placeholder="e.g. SPOS-2026-XXXX-XXXX-XXXX or SPOS-LIFETIME-MASTER-2026" style="height: 48px; font-family: 'Courier New', monospace; font-weight: 600; font-size: 1rem; text-transform: uppercase; border: 2px solid #cbd5e1; border-radius: 10px;" autofocus>
+          </div>
+          <small class="text-muted mt-1 d-block" style="font-size: 0.82rem;">
+            Paste the key provided by the software vendor or administrator to extend or unlock permanent access.
+          </small>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 24px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1; height: 46px; font-weight: 700; border-radius: 10px;">
+            <i class="fas fa-lock-open me-2"></i> Verify & Activate License
+          </button>
+          <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary" style="height: 46px; line-height: 32px; border-radius: 10px; font-weight: 600;">
+            Back to Dashboard
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

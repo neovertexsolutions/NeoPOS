@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kelra Pricing | Plans for Retail</title>
+  <meta name="description" content="Compare Kelra POS plans for independent stores and growing retail teams." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'css/public-pages.css' %}">
+  <style>
+    :root { --ink:#171923; --muted:#626879; --line:#e4e5eb; --paper:#f7f7f9; --purple:#7146e8; --purple-dark:#5832c4; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:#fff; font-family:'DM Sans',sans-serif; }
+    a { color:inherit; text-decoration:none; }
+    .container { width:min(1200px,calc(100% - 48px)); margin:0 auto; }
+    .topbar { position:sticky; top:0; z-index:10; background:rgba(255,255,255,.96); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
+    .nav { min-height:78px; display:flex; align-items:center; justify-content:space-between; gap:28px; }
+    .brand { display:inline-flex; align-items:center; gap:10px; flex:0 0 auto; font:700 1.45rem 'Outfit',sans-serif; }
+    .brand-mark { width:38px; height:34px; display:block; }
+    .brand-mark svg { display:block; width:100%; height:100%; }
+    .nav-links,.nav-actions { display:flex; align-items:center; gap:24px; }
+    .nav-links { color:#555b69; font-size:.91rem; font-weight:600; }
+    .nav-links a:hover { color:var(--purple); }
+    .nav-links a[aria-current="page"] { color:var(--purple-dark); }
+    .button { min-height:42px; display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:0 16px; border:1px solid var(--line); border-radius:7px; font-size:.9rem; font-weight:700; }
+    .button-light { background:#fff; }
+    .button-light:hover { border-color:var(--purple); color:var(--purple); }
+    .button-primary { color:#fff; background:var(--purple); border-color:var(--purple); }
+    .button-primary:hover { background:var(--purple-dark); }
+    .intro { padding:30px 0; background:#f7f7f9; border-bottom:1px solid var(--line); }
+    .intro-inner { display:grid; grid-template-columns:1fr .9fr; align-items:center; gap:48px; }
+    .eyebrow { display:inline-flex; align-items:center; gap:9px; margin-bottom:18px; color:var(--purple-dark); font-size:.79rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; }
+    .eyebrow::before { width:22px; height:2px; content:''; background:var(--purple); }
+    h1,h2,h3 { font-family:'Outfit',sans-serif; }
+    h1 { max-width:650px; margin:0; font-size:clamp(2.7rem,5vw,4.25rem); font-weight:600; line-height:1.05; }
+    .intro p { max-width:540px; margin:18px 0 24px; color:var(--muted); font-size:1.02rem; line-height:1.75; }
+    .intro-actions { display:flex; flex-wrap:wrap; gap:10px; }
+    .intro-image { min-height:220px; position:relative; margin-right:14px; }
+    .intro-image::after { position:absolute; inset:16px -14px -14px 16px; border:1px solid var(--purple); content:''; }
+    .intro-image img { position:relative; z-index:1; display:block; width:100%; height:220px; object-fit:cover; }
+    .pricing { padding:54px 0 78px; background:var(--paper); }
+    .plans { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:stretch; gap:18px; }
+    .plan { position:relative; display:flex; flex-direction:column; min-width:0; padding:30px 26px 26px; border:1px solid var(--line); border-radius:8px; background:#fff; }
+    .plan.featured { border:2px solid var(--purple); padding:29px 25px 25px; }
+    .plan-label { margin-bottom:17px; color:var(--muted); font-size:.78rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+    .featured .plan-label { color:var(--purple-dark); }
+    .plan h2 { margin:0 0 8px; font-size:1.55rem; }
+    .plan-summary { min-height:48px; margin:0; color:var(--muted); font-size:.91rem; line-height:1.6; }
+    .price { margin:24px 0 6px; font:600 2.5rem/1 'Outfit',sans-serif; }
+    .price small { color:var(--muted); font:500 .95rem 'DM Sans',sans-serif; }
+    .price-note { min-height:20px; color:var(--muted); font-size:.8rem; }
+    .plan hr { width:100%; margin:23px 0 14px; border:0; border-top:1px solid var(--line); }
+    .features-label { margin:0 0 6px; font-size:.84rem; font-weight:700; }
+    .feature-list { display:grid; gap:0; margin:0 0 26px; padding:0; list-style:none; }
+    .feature-list li { display:flex; gap:10px; padding:10px 0; border-bottom:1px solid #f0f0f3; color:#505666; font-size:.9rem; line-height:1.5; }
+    .feature-list li:last-child { border-bottom:0; }
+    .feature-list i { margin-top:3px; color:var(--purple); font-size:.8rem; }
+    .plan .button { width:100%; margin-top:auto; }
+    .faq-note { display:flex; align-items:center; justify-content:center; gap:8px; padding:25px 0 0; color:var(--muted); font-size:.91rem; text-align:center; }
+    .faq-note a { color:var(--purple-dark); font-weight:700; text-decoration:underline; text-underline-offset:3px; }
+    @media(max-width:900px) { .nav { flex-wrap:wrap; padding:16px 0; } .nav-links { order:3; width:100%; justify-content:center; flex-wrap:wrap; gap:12px 20px; } .intro-inner { gap:34px; } .intro-image,.intro-image img { min-height:190px; height:190px; } .plans { grid-template-columns:1fr 1fr; } .plan:last-child { grid-column:1 / -1; } }
+    @media(max-width:640px) { .container { width:min(100% - 36px,520px); } .nav { gap:12px; } .nav-actions { gap:7px; } .nav-actions .button { min-height:38px; padding:0 11px; font-size:.82rem; } .nav-links { justify-content:flex-start; gap:10px 18px; font-size:.85rem; } .intro { padding:26px 0 30px; } .intro-inner { grid-template-columns:1fr; gap:20px; } h1 { font-size:3rem; } .intro p { margin-top:15px; } .intro-image,.intro-image img { min-height:160px; height:160px; } .pricing { padding:42px 0 55px; } .plans { grid-template-columns:1fr; gap:14px; } .plan:last-child { grid-column:auto; } .plan,.plan.featured { padding:25px 22px 22px; } .plan-summary { min-height:0; } .faq-note { align-items:flex-start; text-align:left; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <a href="{% url 'home' %}" class="brand" aria-label="Kelra home">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 180 150" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pricingKelraMark" x1="0%" x2="100%" y1="0%" y2="100%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#6d28d9"/></linearGradient></defs><path d="M18 16 L80 16 L108 50 L120 16 L165 16 L119 77 L165 134 L120 134 L106 102 L77 134 L18 134 L62 79 L18 16 Z" fill="url(#pricingKelraMark)"/><path d="M70 26 L128 26 L95 73 L74 56 Z" fill="rgba(255,255,255,0.18)"/></svg></span>
+        <span>kelra</span>
+      </a>
+      <nav class="nav-links" aria-label="Main navigation"><a href="{% url 'home' %}">Home</a><a href="{% url 'home' %}#features">Features</a><a href="{% url 'pos_showcase_page' %}">POS Showcase</a><a href="{% url 'pricing_page' %}" aria-current="page">Pricing</a><a href="{% url 'about_page' %}">About</a><a href="{% url 'contact_page' %}">Contact</a></nav>
+      <div class="nav-actions"><a class="button button-light" href="{% url 'login' %}">Sign In</a><a class="button button-primary" href="{% url 'register' %}">Free Trial</a></div>
+    </div>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="container intro-inner">
+        <div>
+          <span class="eyebrow">Plans & pricing</span>
+          <h1>Choose the setup that fits your store.</h1>
+          <p>Start with the essentials, add more capacity as your business grows, or talk with us about a multi-branch setup.</p>
+          <div class="intro-actions"><a class="button button-primary" href="#plans">Explore plans <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></a><a class="button button-light" href="{% url 'contact_page' %}">Book a demo</a></div>
+        </div>
+        <div class="intro-image"><img src="{% static 'images/hero_pos_store.jpg' %}" alt="Checkout counter in a modern retail store"></div>
+      </div>
+    </section>
+    <section class="pricing" id="plans">
+      <div class="container">
+        <div class="plans">
+          <article class="plan">
+            <span class="plan-label">For a single counter</span>
+            <h2>Starter</h2>
+            <p class="plan-summary">The everyday essentials for a small or independent store.</p>
+            <div class="price">Rs. 999 <small>/ month</small></div>
+            <div class="price-note">Billed monthly</div>
+            <hr>
+            <p class="features-label">Plan includes</p>
+            <ul class="feature-list"><li><i class="fa-solid fa-check" aria-hidden="true"></i>1 cashier terminal</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Up to 500 products</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Basic sales & reports</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Thermal receipt support</li></ul>
+            <a href="{% url 'register' %}?plan=starter" class="button button-light">Choose Starter <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          </article>
+          <article class="plan featured">
+            <span class="plan-label">For growing teams</span>
+            <h2>Business</h2>
+            <p class="plan-summary">More room for a busier store and a larger team.</p>
+            <div class="price">Rs. 2,499 <small>/ month</small></div>
+            <div class="price-note">Billed monthly</div>
+            <hr>
+            <p class="features-label">Everything in Starter, plus</p>
+            <ul class="feature-list"><li><i class="fa-solid fa-check" aria-hidden="true"></i>Unlimited products</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Multi-terminal support</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Inventory & supplier management</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Advanced revenue reports</li></ul>
+            <a href="{% url 'register' %}?plan=business" class="button button-primary">Choose Business <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          </article>
+          <article class="plan">
+            <span class="plan-label">For multi-branch retail</span>
+            <h2>Enterprise</h2>
+            <p class="plan-summary">A tailored setup for larger operations and specific needs.</p>
+            <div class="price">Custom</div>
+            <div class="price-note">Let’s plan the right setup</div>
+            <hr>
+            <p class="features-label">Talk with us about</p>
+            <ul class="feature-list"><li><i class="fa-solid fa-check" aria-hidden="true"></i>Multi-branch support</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Dedicated database setup</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Custom POS branding</li><li><i class="fa-solid fa-check" aria-hidden="true"></i>Priority onboarding</li></ul>
+            <a href="{% url 'contact_page' %}" class="button button-light">Talk to sales <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+          </article>
+        </div>
+        <div class="faq-note"><i class="fa-regular fa-circle-question" aria-hidden="true"></i><span>Need help choosing? <a href="{% url 'contact_page' %}">Talk with the Kelra team</a>.</span></div>
+      </div>
+    </section>
+  </main>
+  {% include 'website/_public_footer.html' %}
+</body>
+</html>
